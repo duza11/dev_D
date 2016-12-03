@@ -30,7 +30,7 @@
                 </select>
             <p>名前：<input type="text" name="item_name" ></p>
             <p>金額：<input type="number" name="price" min="0" required>円</p>
-            <p>数；<input type="number" name="count" min="1" required></p>
+            <p>数：<input type="number" name="count" min="1" required></p>
             <p><input type="submit" value="送信">
                 <input type="reset" value="リセット"></p>
         </form>

@@ -25,10 +25,10 @@
             <a href="?action=logout">(ログアウト)</a>
             <a href="?action=withdraw">(退会)</a>
         </div>
-        <p><a href="?action=input_rev">収入を入力</a><a href="?action=input_spe">支出を入力</p>
+        <p><a href="?action=input_rev">収入を入力</a> <a href="?action=input_spe">支出を入力</p>
         <p>
-            <a href="?action=show_calendar&year=<%=abc.getYear()%>&month=<%=abc.getMonth() - 1%>">前月 </a>
-            <%=abc.getYear()%>年
+            <a href="?action=show_calendar&year=<%=abc.getYear()%>&month=<%=abc.getMonth() - 1%>">前月</a>
+             <%=abc.getYear()%>年
             <%=abc.getMonth() + 1%>月
             <a href="?action=show_calendar&year=<%=abc.getYear()%>&month=<%=abc.getMonth() + 1%>">翌月</a>
         </p>
@@ -44,7 +44,7 @@
                 %>
                 <td class="otherday"><%=abc.getDayList().get(j) - 35%>
                     <%
-                    } else {
+                        } else {
                     %>
                 <td class="day"><%=abc.getDayList().get(j)%>
                     <%
@@ -52,6 +52,25 @@
                     %>
                 </td>
                 <%
+                    }
+                %>
+            </tr>
+            <tr>
+                <%
+                    for (int j = i * 7; j < i * 7 + 7; j++) {
+                        if (abc.getDayList().get(j) > 35) {
+                %>
+                <td class="sche"></td>
+                <%
+                    } else {
+                %>
+                <td class="sche">
+                    <a href="#<%=abc.getYear()%>-<%=abc.getMonth()%>-<%=abc.getDay()%>">
+                        <img src="./img/memo.png" width="14" height="16">
+                    </a>
+                </td>
+                <%
+                        }
                     }
                 %>
             </tr>
