@@ -7,7 +7,7 @@ public class AccountBookCalendar {
     private int year;
     private int month;
     private int day;
-    private List<Integer> dayList;
+    private List<DailyData> dayList;
     
     public void setYear(int year) {
         this.year = year;
@@ -21,7 +21,7 @@ public class AccountBookCalendar {
         this.day = day;
     }
     
-    public void setDayList(List<Integer> dayList) {
+    public void setDayList(List<DailyData> dayList) {
         this.dayList = dayList;
     }
     
@@ -37,7 +37,7 @@ public class AccountBookCalendar {
         return day;
     }
     
-    public List<Integer> getDayList() {
+    public List<DailyData> getDayList() {
         return dayList;
     }
 }

@@ -1,27 +1,29 @@
 package accountbook;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class RevenueBlock {
-    private List<SpendingItem> revenueItemList = new ArrayList<SpendingItem>();
-    private String date;
+    private List<RevenueItem> revenueItemList = new ArrayList<RevenueItem>();
+    private Date date;
     private String place;
 
-    public List<SpendingItem> getRevenueItemList() {
+    public List<RevenueItem> getRevenueItemList() {
         return revenueItemList;
     }
 
-    public void setRevenueItemList(List<SpendingItem> revenueItemList) {
+    public void setRevenueItemList(List<RevenueItem> revenueItemList) {
         this.revenueItemList = revenueItemList;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setDate(String date) throws Exception {
+        this.date = new SimpleDateFormat("yyyy-MM-dd").parse(date);
     }
 
     public String getPlace() {

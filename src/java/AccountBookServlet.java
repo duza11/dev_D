@@ -66,16 +66,16 @@ public class AccountBookServlet extends HttpServlet {
         String nextView = ""; // 処理結果の表示を委託するJSPのパス
         DatabaseConnector dc = null; // データベースへの接続を行うオブジェクト
         UserManager um = null; // ユーザ認証や登録に関する処理を担当
-        ItemManager im = null; // ショッピングサイトの商品に関する処理を担当
         SpendingManager sm = null; // 支出に関する処理を担当
+        RevenueManager rm = null; // 収入に関する処理を担当
 
         try {
             dc = new DatabaseConnector(DB_NAME, DB_USER, DB_PASS);
             dc.openConnection(); // DBへ接続
 
             um = new UserManager(dc);
-            im = new ItemManager(dc);
             sm = new SpendingManager(dc);
+            rm = new RevenueManager(dc);
 
             // 前のページから渡される値を「UTF-8」に設定
             req.setCharacterEncoding("UTF-8");
@@ -103,7 +103,7 @@ public class AccountBookServlet extends HttpServlet {
             } else if (action.equals("login")) {
                 // 認証の処理を実行
                 if (login(um, req)) {
-                    setDateArray(req);
+                    setDateArray(rm, sm, req);
                     nextView = TOP_JSP;
 //                    nextView = showItems(im, req); // ログイン成功
                 } else {
@@ -129,7 +129,7 @@ public class AccountBookServlet extends HttpServlet {
                     nextView = LOGIN_JSP;
 
                 } else if (action.equals("show_calendar") || action.equals("")) {
-                    setDateArray(req);
+                    setDateArray(rm, sm, req);
                     nextView = TOP_JSP;
                     // 商品一覧を表示
 //                    nextView = showItems(im, req);
@@ -148,10 +148,12 @@ public class AccountBookServlet extends HttpServlet {
                 } else if (action.equals("input_spe")) {
                     nextView = INPUT_SPENDING;
                 } else if (action.equals("register_rev")) {
+                    registerRevenue(user, rm, req);
+                    setDateArray(rm, sm, req);
                     nextView = TOP_JSP;
                 } else if (action.equals("register_spe")) {
-                    registerSpending(sm, req);
-                    setDateArray(req);
+                    registerSpending(user, sm, req);
+                    setDateArray(rm, sm, req);
                     nextView = TOP_JSP;
                 } else if (action.equals("withdraw")) {
                     nextView = withdraw(um, req);
@@ -264,7 +266,7 @@ public class AccountBookServlet extends HttpServlet {
         return LOGIN_JSP;
     }
 
-    private void setDateArray(HttpServletRequest req) {
+    private void setDateArray(RevenueManager rm, SpendingManager sm, HttpServletRequest req) throws Exception {
         Calendar calendar = Calendar.getInstance();
 
         AccountBookCalendar abc = new AccountBookCalendar();
@@ -317,20 +319,23 @@ public class AccountBookServlet extends HttpServlet {
         calendar.set(year, month + 1, 0);
         int thisMonthLastDay = calendar.get(Calendar.DATE);
 
-        List<Integer> dayList = new ArrayList<Integer>();
+        List<DailyData> dayList = new ArrayList<DailyData>();
 
         for (int i = startWeek - 2; i >= 0; i--) {
-            dayList.add(beforeMonthLastDay - i + 35);
+            dayList.add(new DailyData(beforeMonthLastDay - i + 35));
         }
 
         for (int i = 1; i <= thisMonthLastDay; i++) {
-            dayList.add(i);
+            dayList.add(new DailyData(i));
         }
 
         int nextMonthDay = 1;
         while (dayList.size() % 7 != 0) {
-            dayList.add(35 + nextMonthDay++);
+            dayList.add(new DailyData(35 + nextMonthDay++));
         }
+        
+        rm.setDayListRevenue(year, month + 1, dayList);
+        sm.setDayListSpending(year, month + 1, dayList);
 
         abc.setYear(year);
         abc.setMonth(month);
@@ -339,7 +344,7 @@ public class AccountBookServlet extends HttpServlet {
         req.setAttribute("abc", abc);
     }
     
-    private void registerSpending(SpendingManager sm, HttpServletRequest req) {
+    private void registerSpending(User user,SpendingManager sm, HttpServletRequest req) throws Exception {
         SpendingBlock sb = new SpendingBlock();
         SpendingItem si = new SpendingItem();
         List<SpendingItem> spendingItemList = new ArrayList<SpendingItem>();
@@ -355,9 +360,26 @@ public class AccountBookServlet extends HttpServlet {
         sb.setPlace(req.getParameter("place"));
         sb.setSpendingItemList(spendingItemList);
         
-        sm.registerSpendingBlock(sb);
+        sm.registerSpendingBlock(user, sb);
+    }
+    
+    private void registerRevenue(User user,RevenueManager rm, HttpServletRequest req) throws Exception {
+        RevenueBlock rb = new RevenueBlock();
+        RevenueItem ri = new RevenueItem();
+        List<RevenueItem> revenueItemList = new ArrayList<RevenueItem>();
         
-        //sm.registerSpendingBlock();
+        ri.setItemName(req.getParameter("item_name"));
+        ri.setKindId(Integer.parseInt(req.getParameter("kind")));
+        ri.setPrice(Integer.parseInt(req.getParameter("price")));
+        ri.setCount(Integer.parseInt(req.getParameter("count")));
+        
+        revenueItemList.add(ri);
+        
+        rb.setDate(req.getParameter("date"));
+        rb.setPlace(req.getParameter("place"));
+        rb.setRevenueItemList(revenueItemList);
+        
+        rm.registerRevenueBlock(user, rb);
     }
 
     private void createPieChart(HttpServletRequest req) {

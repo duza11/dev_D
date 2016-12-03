@@ -28,7 +28,7 @@
         <p><a href="?action=input_rev">収入を入力</a> <a href="?action=input_spe">支出を入力</p>
         <p>
             <a href="?action=show_calendar&year=<%=abc.getYear()%>&month=<%=abc.getMonth() - 1%>">前月</a>
-             <%=abc.getYear()%>年
+            <%=abc.getYear()%>年
             <%=abc.getMonth() + 1%>月
             <a href="?action=show_calendar&year=<%=abc.getYear()%>&month=<%=abc.getMonth() + 1%>">翌月</a>
         </p>
@@ -40,13 +40,13 @@
             <tr>
                 <%
                     for (int j = i * 7; j < i * 7 + 7; j++) {
-                        if (abc.getDayList().get(j) > 35) {
+                        if (abc.getDayList().get(j).getDay() > 35) {
                 %>
-                <td class="otherday"><%=abc.getDayList().get(j) - 35%>
+                <td class="otherday"><%=abc.getDayList().get(j).getDay() - 35%>
                     <%
-                        } else {
+                    } else {
                     %>
-                <td class="day"><%=abc.getDayList().get(j)%>
+                <td class="day"><%=abc.getDayList().get(j).getDay()%>
                     <%
                         }
                     %>
@@ -58,19 +58,30 @@
             <tr>
                 <%
                     for (int j = i * 7; j < i * 7 + 7; j++) {
-                        if (abc.getDayList().get(j) > 35) {
+                        if (abc.getDayList().get(j).getDay() > 35) {
                 %>
                 <td class="sche"></td>
                 <%
-                    } else {
+                } else {
                 %>
                 <td class="sche">
                     <a href="#<%=abc.getYear()%>-<%=abc.getMonth()%>-<%=abc.getDay()%>">
                         <img src="./img/memo.png" width="14" height="16">
-                    </a>
-                </td>
-                <%
+                    </a><br>
+                    <%
+                        if (abc.getDayList().get(j).getRevenue() != -1) {
+                    %>
+                    <div style="color: green;"><%=abc.getDayList().get(j).getRevenue()%></div>
+                    <%
                         }
+                        if (abc.getDayList().get(j).getSpending() != -1) {
+                    %>
+                    <div style="color: red;"><%=abc.getDayList().get(j).getSpending()%></div>
+                    <%
+                        }
+                    %>
+                </td>
+                <%                        }
                     }
                 %>
             </tr>

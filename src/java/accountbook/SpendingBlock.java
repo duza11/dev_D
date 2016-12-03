@@ -1,11 +1,13 @@
 package accountbook;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class SpendingBlock {
     private List<SpendingItem> spendingItemList = new ArrayList<SpendingItem>();
-    private String date;
+    private Date date;
     private String place;
 
     public List<SpendingItem> getSpendingItemList() {
@@ -16,12 +18,12 @@ public class SpendingBlock {
         this.spendingItemList = spendingItemList;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setDate(String date) throws Exception {
+        this.date = new SimpleDateFormat("yyyy-MM-dd").parse(date);
     }
 
     public String getPlace() {
