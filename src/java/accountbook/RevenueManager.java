@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class RevenueManager {
+
     private Statement st = null;
     private PreparedStatement ps = null;
     private ResultSet rs = null;
@@ -16,7 +17,7 @@ public class RevenueManager {
     public RevenueManager(DatabaseConnector dc) {
         this.dc = dc;
     }
-    
+
     public void setDayListRevenue(int year, int month, List<DailyData> dayList) throws Exception {
         String sql = "select rb.date, sum(ri.price * ri.count) as sum "
                 + "from users as u, revenue_block as rb, revenue_item as ri "
@@ -32,7 +33,7 @@ public class RevenueManager {
             rs.close();
             return;
         }
-        
+
         for (DailyData dd : dayList) {
             if (rs.getDate("date").compareTo(new SimpleDateFormat("yyyy-MM-dd")
                     .parse(String.format("%d-%d-%d", year, month, dd.getDay()))) == 0) {
@@ -46,13 +47,13 @@ public class RevenueManager {
     }
 
     public void registerRevenueBlock(User user, RevenueBlock rb) throws Exception {
-        String sql = "";
+        String sql = "insert into revenue_item(block_id, item_name, kind_id, price, count) "
+                + "select auto_increment, ?, ?, ?, ? "
+                + "from information_schema.tables where table_name = 'revenue_block' "
+                + "and table_schema = 'account_book'";
+        dc.openConnection(sql);
+
         for (RevenueItem ri : rb.getRevenueItemList()) {
-            sql += "insert into revenue_item(block_id, item_name, kind_id, price, count) "
-                    + "select auto_increment, ?, ?, ?, ? "
-                    + "from information_schema.tables where table_name = 'revenue_block' "
-                    + "and table_schema = 'account_book'";
-            dc.openConnection(sql);
             ps = dc.getPreparedStatement();
             ps.setString(1, ri.getItemName());
             ps.setInt(2, ri.getKindId());
@@ -61,7 +62,7 @@ public class RevenueManager {
             ps.addBatch();
         }
         ps.executeBatch();
-        
+
         sql = "insert into revenue_block values(null, ?, ?, ?)";
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();

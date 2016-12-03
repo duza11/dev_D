@@ -119,8 +119,7 @@ public class AccountBookServlet extends HttpServlet {
                 nextView = registration(um, req);
 
             } else // 以下は先にログインしている必要がある処理
-            {
-                if (user == null) {
+             if (user == null) {
                     /*
 		     * カートオブジェクトが無い場合はログインしていないと判断し，
 		     * 強制的にログインページへ遷移
@@ -163,7 +162,6 @@ public class AccountBookServlet extends HttpServlet {
                     nextView = "";
 
                 }
-            }
 
             if (nextView.equals("")) {
                 // actionパラメータの指定が無い，または不明な処理が要求された場合
@@ -333,7 +331,7 @@ public class AccountBookServlet extends HttpServlet {
         while (dayList.size() % 7 != 0) {
             dayList.add(new DailyData(35 + nextMonthDay++));
         }
-        
+
         rm.setDayListRevenue(year, month + 1, dayList);
         sm.setDayListSpending(year, month + 1, dayList);
 
@@ -343,42 +341,44 @@ public class AccountBookServlet extends HttpServlet {
         abc.setDayList(dayList);
         req.setAttribute("abc", abc);
     }
-    
-    private void registerSpending(User user,SpendingManager sm, HttpServletRequest req) throws Exception {
+
+    private void registerSpending(User user, SpendingManager sm, HttpServletRequest req) throws Exception {
         SpendingBlock sb = new SpendingBlock();
-        SpendingItem si = new SpendingItem();
         List<SpendingItem> spendingItemList = new ArrayList<SpendingItem>();
-        
-        si.setItemName(req.getParameter("item_name"));
-        si.setKindId(Integer.parseInt(req.getParameter("kind")));
-        si.setPrice(Integer.parseInt(req.getParameter("price")));
-        si.setCount(Integer.parseInt(req.getParameter("count")));
-        
-        spendingItemList.add(si);
-        
+
+        for (int i = 0; req.getParameter("kind[" + i + "]") != null; i++) {
+            SpendingItem si = new SpendingItem();
+            si.setItemName(req.getParameter("item_name[" + i + "]"));
+            si.setKindId(Integer.parseInt(req.getParameter("kind[" + i + "]")));
+            si.setPrice(Integer.parseInt(req.getParameter("price[" + i + "]")));
+            si.setCount(Integer.parseInt(req.getParameter("count[" + i + "]")));
+            spendingItemList.add(si);
+        }
+
         sb.setDate(req.getParameter("date"));
         sb.setPlace(req.getParameter("place"));
         sb.setSpendingItemList(spendingItemList);
-        
+
         sm.registerSpendingBlock(user, sb);
     }
-    
-    private void registerRevenue(User user,RevenueManager rm, HttpServletRequest req) throws Exception {
+
+    private void registerRevenue(User user, RevenueManager rm, HttpServletRequest req) throws Exception {
         RevenueBlock rb = new RevenueBlock();
-        RevenueItem ri = new RevenueItem();
         List<RevenueItem> revenueItemList = new ArrayList<RevenueItem>();
-        
-        ri.setItemName(req.getParameter("item_name"));
-        ri.setKindId(Integer.parseInt(req.getParameter("kind")));
-        ri.setPrice(Integer.parseInt(req.getParameter("price")));
-        ri.setCount(Integer.parseInt(req.getParameter("count")));
-        
-        revenueItemList.add(ri);
-        
+
+        for (int i = 0; req.getParameter("kind[" + i + "]") != null; i++) {
+            RevenueItem ri = new RevenueItem();
+            ri.setItemName(req.getParameter("item_name[" + i + "]"));
+            ri.setKindId(Integer.parseInt(req.getParameter("kind[" + i + "]")));
+            ri.setPrice(Integer.parseInt(req.getParameter("price[" + i + "]")));
+            ri.setCount(Integer.parseInt(req.getParameter("count[" + i + "]")));
+            revenueItemList.add(ri);
+        }
+
         rb.setDate(req.getParameter("date"));
         rb.setPlace(req.getParameter("place"));
         rb.setRevenueItemList(revenueItemList);
-        
+
         rm.registerRevenueBlock(user, rb);
     }
 
