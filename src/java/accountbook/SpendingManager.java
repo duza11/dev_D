@@ -2,7 +2,9 @@ package accountbook;
 
 import java.sql.*;
 import java.text.SimpleDateFormat;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SpendingManager {
 
@@ -66,5 +68,19 @@ public class SpendingManager {
         ps.setDate(2, new Date(sb.getDate().getTime()));
         ps.setString(3, sb.getPlace());
         ps.executeUpdate();
+    }
+    
+    public Map<Integer, String> getSpendingKindMap() throws Exception {
+        Map<Integer, String> spendingKindMap = new LinkedHashMap<Integer, String>();
+        String sql = "select * from spending_item_kind order by kind_id asc";
+        dc.openConnection(sql);
+        ps = dc.getPreparedStatement();
+        rs = ps.executeQuery();
+        
+        while (rs.next()) {
+            spendingKindMap.put(rs.getInt("kind_id"), rs.getString("kind_name"));
+        }
+        rs.close();
+        return spendingKindMap;
     }
 }

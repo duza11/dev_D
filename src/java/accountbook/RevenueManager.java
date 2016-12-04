@@ -5,7 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RevenueManager {
 
@@ -70,5 +72,19 @@ public class RevenueManager {
         ps.setDate(2, new Date(rb.getDate().getTime()));
         ps.setString(3, rb.getPlace());
         ps.executeUpdate();
+    }
+    
+    public Map<Integer, String> getRevenueKindMap() throws Exception {
+        Map<Integer, String> revenueKindMap = new LinkedHashMap<Integer, String>();
+        String sql = "select * from revenue_item_kind order by kind_id asc";
+        dc.openConnection(sql);
+        ps = dc.getPreparedStatement();
+        rs = ps.executeQuery();
+        
+        while (rs.next()) {
+            revenueKindMap.put(rs.getInt("kind_id"), rs.getString("kind_name"));
+        }
+        rs.close();
+        return revenueKindMap;
     }
 }

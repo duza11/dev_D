@@ -24,13 +24,13 @@ $(function () {
 
         // clone取得
         var clone = $('#form_block\\[' + frm_cnt + '\\]');
-        clone.children('div.close').show();
+        clone.find('td').children('div.close').show();
         clone.slideDown('slow');
     });
 
     $(document).on('click', '.close', function () {
-        var removeObj = $(this).parent();
-        removeObj.fadeOut('fast', function () {
+        var removeObj = $(this).parent().parent();
+        removeObj.slideUp('fast', function () {
             removeObj.remove();
             // 番号振り直し
             frm_cnt = 0;
@@ -39,7 +39,7 @@ $(function () {
                     frm_cnt++;
                     $(obj)
                             .attr('id', 'form_block[' + frm_cnt + ']') // id属性を変更。
-                            .find('input').each(function (idx, obj) {
+                            .find('input, select').each(function (idx, obj) {
                         $(obj).attr({
                             id: $(obj).attr('id').replace(/\[[0-9]+\]$/, '[' + frm_cnt + ']'),
                             name: $(obj).attr('name').replace(/\[[0-9]+\]$/, '[' + frm_cnt + ']')

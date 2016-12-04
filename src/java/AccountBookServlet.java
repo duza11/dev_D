@@ -119,7 +119,8 @@ public class AccountBookServlet extends HttpServlet {
                 nextView = registration(um, req);
 
             } else // 以下は先にログインしている必要がある処理
-             if (user == null) {
+            {
+                if (user == null) {
                     /*
 		     * カートオブジェクトが無い場合はログインしていないと判断し，
 		     * 強制的にログインページへ遷移
@@ -143,8 +144,10 @@ public class AccountBookServlet extends HttpServlet {
                 } else if (action.equals("show_spe_bar")) {
                     nextView = SHOW_SPENDING_BAR_GRAPH;
                 } else if (action.equals("input_rev")) {
+                    setRevenueItemKindMap(rm, req);
                     nextView = INPUT_REVENUE;
                 } else if (action.equals("input_spe")) {
+                    setSpendingItemKindMap(sm, req);
                     nextView = INPUT_SPENDING;
                 } else if (action.equals("register_rev")) {
                     registerRevenue(user, rm, req);
@@ -162,6 +165,7 @@ public class AccountBookServlet extends HttpServlet {
                     nextView = "";
 
                 }
+            }
 
             if (nextView.equals("")) {
                 // actionパラメータの指定が無い，または不明な処理が要求された場合
@@ -340,6 +344,16 @@ public class AccountBookServlet extends HttpServlet {
         abc.setDay(day);
         abc.setDayList(dayList);
         req.setAttribute("abc", abc);
+    }
+
+    public void setRevenueItemKindMap(RevenueManager rm, HttpServletRequest req) throws Exception {
+        Map<Integer, String> revenueItemKindMap = rm.getRevenueKindMap();
+        req.setAttribute("kind", revenueItemKindMap);
+    }
+
+    public void setSpendingItemKindMap(SpendingManager sm, HttpServletRequest req) throws Exception {
+        Map<Integer, String> spendingItemKindMap = sm.getSpendingKindMap();
+        req.setAttribute("kind", spendingItemKindMap);
     }
 
     private void registerSpending(User user, SpendingManager sm, HttpServletRequest req) throws Exception {

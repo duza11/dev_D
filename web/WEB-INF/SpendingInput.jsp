@@ -1,5 +1,7 @@
+<%@page import="java.util.Map"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
+<jsp:useBean id="kind" type="Map<Integer, String>" scope="request" />
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -10,37 +12,52 @@
     <body>
         <h1>支出額の入力画面</h1>
         <form action="?action=register_spe" method="post">
-            <p>日付：<input type="date" name="date" required></p>
-            <p>場所：<input type="text" name="place"></p>
-            <div class="form-block" id="form_block[0]">
-                <div class="close" title="Close" style="display: none;"><button type="button">-</button></div>
-                <p>ジャンル：<select name="kind[0]" id="kind[0]" required>
-                        <option value="1">医療費</option>
-                        <option value="2">教育費</option>
-                        <option value="3">交際費</option>
-                        <option value="4">交通費</option>
-                        <option value="5">在宅費</option>
-                        <option value="6">食費</option>
-                        <option value="7">水道光熱費</option>
-                        <option value="8">生活雑貨・日用品</option>
-                        <option value="9">税金</option>
-                        <option value="10">通信費</option>
-                        <option value="11">被服費</option>
-                        <option value="12">美容費</option>
-                        <option value="13">ペット</option>
-                        <option value="14">保険</option>
-                        <option value="15">遊興費</option>
-                        <option value="16">その他</option>
-                    </select>
-                <p>名前：<input type="text" name="item_name[0]" id="item_name[0]"></p>
-                <p>金額：<input type="number" name="price[0]" id="price[0]" min="0" required>円</p>
-                <p>数：<input type="number" name="count[0]" id="count[0]" min="1" required></p>
-            </div>
+            <table>
+                <tr>
+                    <td colspan="5">日付</td>
+                </tr>
+                <tr>
+                    <td colspan="5"><input type="date" name="date" required></td>
+                </tr>
+                <tr>
+                    <td colspan="5">店名</td>
+                </tr>
+                <tr>
+                    <td colspan="5"><input type="text" name="place"></td>
+                </tr>
+                <tr>
+                    <td>ジャンル</td>
+                    <td>名前</td>
+                    <td>金額</td>
+                    <td>数</td>
+                </tr>
+                <tr class="form-block" id="form_block[0]">
+                    <td>
+                        <select name="kind[0]" id="kind[0]" required>
+                            <%
+                                for (Map.Entry<Integer, String> e : kind.entrySet()) {
+                            %>
+                            <option value="<%=e.getKey()%>"><%=e.getValue()%></option>
+                            <%
+                                }
+                            %>
+                        </select>
+                    </td>
+                    <td><input type="text" name="item_name[0]" id="item_name[0]"></td>
+                    <td><input type="number" name="price[0]" id="price[0]" min="0" required></td>
+                    <td><input type="number" name="count[0]" id="count[0]" min="1" required></td>
+                    <td><div class="close" title="Close" style="display: none;"><button type="button">-</button></div></td>
+                </tr>
+            </table>
             <div class="form-block" id="form_add">
-                <button class="add" type="button">+</button>
+                <p>
+                    <button class="add" type="button">+</button>
+                </p>
             </div>
-            <p><input type="submit" value="送信">
-                <input type="reset" value="リセット"></p>
+            <p>
+                <input type="submit" value="送信">
+                <input type="reset" value="リセット">
+            </p>
         </form>
     </body>
 </html>
