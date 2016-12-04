@@ -17,15 +17,17 @@ public class SpendingManager {
         this.dc = dc;
     }
 
-    public void setDayListSpending(int year, int month, List<DailyData> dayList) throws Exception {
+    public void setDayListSpending(User user, int year, int month, List<DailyData> dayList) throws Exception {
         String sql = "select sb.date, sum(si.price * si.count) as sum "
                 + "from users as u, spending_block as sb, spending_item as si "
                 + "where u.user_id = sb.user_id and sb.block_id = si.block_id "
+                + "and u.user_id = ? "
                 + "and (date_format(date, '%Y%m') = ?) group by sb.date;";
 
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
-        ps.setString(1, String.format("%d%d", year, month));
+        ps.setInt(1, user.getUser_id());
+        ps.setString(2, String.format("%d%d", year, month));
         rs = ps.executeQuery();
 
         if (!rs.next()) {

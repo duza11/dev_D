@@ -20,15 +20,18 @@ public class RevenueManager {
         this.dc = dc;
     }
 
-    public void setDayListRevenue(int year, int month, List<DailyData> dayList) throws Exception {
+    public void setDayListRevenue(User user, int year, int month, List<DailyData> dayList) throws Exception {
         String sql = "select rb.date, sum(ri.price * ri.count) as sum "
                 + "from users as u, revenue_block as rb, revenue_item as ri "
                 + "where u.user_id = rb.user_id and rb.block_id = ri.block_id "
+                + "and u.user_id = ? "
                 + "and (date_format(date, '%Y%m') = ?) group by rb.date;";
 
+        System.out.println("\n\n" + user.getUser_id());
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
-        ps.setString(1, String.format("%d%d", year, month));
+        ps.setInt(1, user.getUser_id());
+        ps.setString(2, String.format("%d%d", year, month));
         rs = ps.executeQuery();
 
         if (!rs.next()) {

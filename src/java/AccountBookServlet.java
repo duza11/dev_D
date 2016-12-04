@@ -103,7 +103,8 @@ public class AccountBookServlet extends HttpServlet {
             } else if (action.equals("login")) {
                 // 認証の処理を実行
                 if (login(um, req)) {
-                    setDateArray(rm, sm, req);
+                    user = (User) session.getAttribute("user");
+                    setDateArray(rm, sm, user, req);
                     nextView = TOP_JSP;
 //                    nextView = showItems(im, req); // ログイン成功
                 } else {
@@ -129,7 +130,7 @@ public class AccountBookServlet extends HttpServlet {
                     nextView = LOGIN_JSP;
 
                 } else if (action.equals("show_calendar") || action.equals("")) {
-                    setDateArray(rm, sm, req);
+                    setDateArray(rm, sm, user, req);
                     nextView = TOP_JSP;
                     // 商品一覧を表示
 //                    nextView = showItems(im, req);
@@ -151,11 +152,11 @@ public class AccountBookServlet extends HttpServlet {
                     nextView = INPUT_SPENDING;
                 } else if (action.equals("register_rev")) {
                     registerRevenue(user, rm, req);
-                    setDateArray(rm, sm, req);
+                    setDateArray(rm, sm, user, req);
                     nextView = TOP_JSP;
                 } else if (action.equals("register_spe")) {
                     registerSpending(user, sm, req);
-                    setDateArray(rm, sm, req);
+                    setDateArray(rm, sm, user, req);
                     nextView = TOP_JSP;
                 } else if (action.equals("withdraw")) {
                     nextView = withdraw(um, req);
@@ -268,7 +269,7 @@ public class AccountBookServlet extends HttpServlet {
         return LOGIN_JSP;
     }
 
-    private void setDateArray(RevenueManager rm, SpendingManager sm, HttpServletRequest req) throws Exception {
+    private void setDateArray(RevenueManager rm, SpendingManager sm, User user, HttpServletRequest req) throws Exception {
         Calendar calendar = Calendar.getInstance();
 
         AccountBookCalendar abc = new AccountBookCalendar();
@@ -336,8 +337,8 @@ public class AccountBookServlet extends HttpServlet {
             dayList.add(new DailyData(35 + nextMonthDay++));
         }
 
-        rm.setDayListRevenue(year, month + 1, dayList);
-        sm.setDayListSpending(year, month + 1, dayList);
+        rm.setDayListRevenue(user, year, month + 1, dayList);
+        sm.setDayListSpending(user, year, month + 1, dayList);
 
         abc.setYear(year);
         abc.setMonth(month);

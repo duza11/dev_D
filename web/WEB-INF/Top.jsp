@@ -7,7 +7,7 @@
 <html lang="ja">
     <head>
         <meta charset="utf-8">
-        <title>スケジュール管理</title>
+        <title>カレンダー</title>
         <style>
             table{border:1px solid #a9a9a9;width:90%;padding:0px;margin:0px;border-collapse:collapse;}
             td{width:12%;border-top:1px solid #a9a9a9;border-left:1px solid #a9a9a9;vertical-align:top;margin:0px;padding:2px;}
