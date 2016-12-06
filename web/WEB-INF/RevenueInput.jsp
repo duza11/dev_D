@@ -1,6 +1,7 @@
 <%@page import="java.util.Map"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
+<jsp:useBean id="user" class="accountbook.User" scope="session" />
 <jsp:useBean id="kind" type="Map<Integer, String>" scope="request" />
 <html lang="ja">
     <head>
@@ -10,6 +11,11 @@
         <title>収入額の入力画面</title>
     </head>
     <body>
+        <div align=right>
+            ようこそ、<%=user.getUsername()%>さん
+            <a href="?action=logout">(ログアウト)</a>
+            <a href="?action=withdraw">(退会)</a>
+        </div>
         <h1>収入額の入力画面</h1>
         <form action="?action=register_rev" method="post">
 

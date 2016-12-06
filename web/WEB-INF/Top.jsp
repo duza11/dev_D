@@ -65,7 +65,7 @@
                 } else {
                 %>
                 <td class="sche">
-                    <a href="#<%=abc.getYear()%>-<%=abc.getMonth()%>-<%=abc.getDay()%>">
+                    <a href="#<%=abc.getYear()%>-<%=abc.getMonth() + 1%>-<%=abc.getDayList().get(j).getDay()%>">
                         <img src="./img/memo.png" width="14" height="16">
                     </a><br>
                     <%

@@ -29,13 +29,9 @@ public class AccountBookServlet extends HttpServlet {
     // 支出の入力のビューを担当
     private static String INPUT_SPENDING = "/WEB-INF/SpendingInput.jsp";
     // 収入の円グラフのビューを担当
-    private static String SHOW_REVENUE_PIE_GRAPH = "/WEB-INF/ShowRevenuePieGraph.jsp";
-    // 支出の入力のビューを担当
-    private static String SHOW_SPENDING_PIE_GRAPH = "/WEB-INF/ShowSpendingPieGraph.jsp";
-    // 収入の棒グラフのビューを担当
-    private static String SHOW_REVENUE_BAR_GRAPH = "/WEB-INF/ShowRevenueBarGraph";
-    // 支出の棒グラフのビューを担当
-    private static String SHOW_SPENDING_BAR_GRAPH = "/WEB-INF/ShowSpendingBarGraph";
+    private static String SHOW_PIE_CHART = "/WEB-INF/ShowPieChart.jsp";
+    // 棒グラフのビューを担当
+    private static String SHOW_BAR_CHART = "/WEB-INF/ShowBarChart.jsp";
 
     /**
      * サーブレットがPOSTメソッドでアクセスされた際に呼ばれる．
@@ -136,14 +132,14 @@ public class AccountBookServlet extends HttpServlet {
 //                    nextView = showItems(im, req);
                 } else if (action.equals("show_rev_pie")) {
                     createPieChart(req);
-                    nextView = SHOW_REVENUE_PIE_GRAPH;
+                    nextView = SHOW_PIE_CHART;
                 } else if (action.equals("show_spe_pie")) {
                     createPieChart(req);
-                    nextView = SHOW_REVENUE_PIE_GRAPH;
+                    nextView = SHOW_PIE_CHART;
                 } else if (action.equals("show_rev_bar")) {
-                    nextView = SHOW_REVENUE_BAR_GRAPH;
+                    nextView = SHOW_BAR_CHART;
                 } else if (action.equals("show_spe_bar")) {
-                    nextView = SHOW_SPENDING_BAR_GRAPH;
+                    nextView = SHOW_BAR_CHART;
                 } else if (action.equals("input_rev")) {
                     setRevenueItemKindMap(rm, req);
                     nextView = INPUT_REVENUE;

@@ -1,8 +1,9 @@
 <%@page import="java.util.Map"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
+<jsp:useBean id="user" class="accountbook.User" scope="session" />
 <jsp:useBean id="kind" type="Map<Integer, String>" scope="request" />
-<html>
+<html lang="ja">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <script src="//code.jquery.com/jquery-3.1.1.min.js"></script>
@@ -10,6 +11,11 @@
         <title>支出額の入力画面</title>
     </head>
     <body>
+        <div align=right>
+            ようこそ、<%=user.getUsername()%>さん
+            <a href="?action=logout">(ログアウト)</a>
+            <a href="?action=withdraw">(退会)</a>
+        </div>
         <h1>支出額の入力画面</h1>
         <form action="?action=register_spe" method="post">
             <table>

@@ -26,7 +26,7 @@ import org.jfree.data.general.DefaultPieDataset;
  *
  * @author Admin
  */
-public class ChartServlet extends HttpServlet {
+public class PieChartServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
