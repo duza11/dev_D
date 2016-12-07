@@ -47,7 +47,7 @@ public class BarChartServlet extends HttpServlet {
             }
 
             String action = request.getParameter("action");
-            int kind = Integer.parseInt(request.getParameter("kind"));
+            int kind = Integer.parseInt(request.getParameter("category"));
             String date = request.getParameter("date");
 
             if (action.equals("show_rev_bar")) {

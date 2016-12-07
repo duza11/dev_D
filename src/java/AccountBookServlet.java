@@ -131,10 +131,10 @@ public class AccountBookServlet extends HttpServlet {
                     // 商品一覧を表示
 //                    nextView = showItems(im, req);
                 } else if (action.equals("show_rev_pie")) {
-                    createPieChart(req);
+                    createPieChart(user, rm, sm, req);
                     nextView = SHOW_PIE_CHART;
                 } else if (action.equals("show_spe_pie")) {
-                    createPieChart(req);
+                    createPieChart(user, rm ,sm, req);
                     nextView = SHOW_PIE_CHART;
                 } else if (action.equals("show_rev_bar")) {
                     nextView = SHOW_BAR_CHART;
@@ -393,24 +393,25 @@ public class AccountBookServlet extends HttpServlet {
         rm.registerRevenueBlock(user, rb);
     }
 
-    private void createPieChart(HttpServletRequest req) {
+    private void createPieChart(User user, RevenueManager rm, SpendingManager sm, HttpServletRequest req) throws Exception {
         try {
-            String[][] aryDat = {
-                {"A-08", "150000"},
-                {"B-07", "55500"},
-                {"B-01", "75000"},
-                {"B-03", "83100"},
-                {"A-12", "22500"}
-            };
+            List<PieChartItem> pieChartItemList = null;
 
+            if (req.getParameter("action").equals("show_rev_pie")) {
+                pieChartItemList = rm.getPieChartItemList(user, "");
+            } else if (req.getParameter("action").equals("show_spe_pie")) {
+                pieChartItemList = sm.getPieChartItemList(user, "");
+            }
+            
+            ChartFactory.setChartTheme(StandardChartTheme.createLegacyTheme());
             DefaultPieDataset objDpd = new DefaultPieDataset();
-            for (int i = 0; i < aryDat.length; i++) {
-                objDpd.setValue(aryDat[i][0], Integer.parseInt(aryDat[i][1]));
+            for (PieChartItem pci : pieChartItemList) {
+                objDpd.setValue(Integer.toString(pci.getKindId()), pci.getPrice());
             }
             JFreeChart objCht = ChartFactory.createPieChart3D("サイトアクセスログ", objDpd, true, true, true);
             // クリッカブル・マップ用のリンクを生成
             PiePlot objPp = (PiePlot) objCht.getPlot();
-            objPp.setURLGenerator(new StandardPieURLGenerator("ShopServlet?action=0"));
+            objPp.setURLGenerator(new StandardPieURLGenerator("?action=" + (req.getParameter("action").equals("show_rev_pie")? "show_rev_bar" : "show_spe_bar") + "&date=2016-12-07"));
             // マップ用に生成された画像を保存するためにダミー・ファイルを生成
             File objFl = File.createTempFile("tips", ".jpg");
 

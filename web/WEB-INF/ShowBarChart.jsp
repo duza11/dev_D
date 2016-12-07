@@ -12,6 +12,6 @@
             <a href="?action=logout">(ログアウト)</a>
             <a href="?action=withdraw">(退会)</a>
         </div>
-        <h1><img src="barchart.jpg?action=<%=request.getParameter("action")%>&kind=<%=request.getParameter("kind")%>&date=<%=request.getParameter("date")%>" /></h1>
+        <h1><img src="barchart.jpg?action=<%=request.getParameter("action")%>&category=<%=request.getParameter("category")%>&date=<%=request.getParameter("date")%>" /></h1>
     </body>
 </html>

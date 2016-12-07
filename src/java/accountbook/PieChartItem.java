@@ -1,22 +1,37 @@
 package accountbook;
 
 public class PieChartItem {
-    private String kind;
-    private int count;
+    private int kindId;
+    private String kindName;
+    private int price;
 
-    public String getKind() {
-        return kind;
+    public PieChartItem(int kindId, String kindName) {
+        this.kindId = kindId;
+        this.kindName = kindName;
+        this.price = 0;
+    }
+    
+    public int getKindId() {
+        return kindId;
     }
 
-    public void setKind(String kind) {
-        this.kind = kind;
+    public void setKindName(int kindId) {
+        this.kindId = kindId;
+    }
+    
+    public String getKindName() {
+        return kindName;
     }
 
-    public int getCount() {
-        return count;
+    public void setKindName(String kindName) {
+        this.kindName = kindName;
     }
 
-    public void setCount(int count) {
-        this.count = count;
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
     }
 }

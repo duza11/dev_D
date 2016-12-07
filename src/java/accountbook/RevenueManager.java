@@ -104,9 +104,9 @@ public class RevenueManager {
         if (rs.next()) {
             for (int i = -11; i < 1; i++) {
                 BarChartItem bci = new BarChartItem(rs.getString("kind_name"),
-                        (Integer.parseInt(dateArray[1]) + i > 0)
-                        ? String.format("%s/%d", dateArray[0], Integer.parseInt(dateArray[1]) + i)
-                        : String.format("%d/%d", Integer.parseInt(dateArray[0]) - 1, Integer.parseInt(dateArray[1]) + i + 12));
+                        (Integer.parseInt(dateArray[1]) + i > 0)? 
+                                String.format("%s/%d", dateArray[0], Integer.parseInt(dateArray[1]) + i) 
+                                : String.format("%d/%d", Integer.parseInt(dateArray[0]) - 1, Integer.parseInt(dateArray[1]) + i + 12));
                 barChartItemList.add(bci);
             }
         }
@@ -144,5 +144,47 @@ public class RevenueManager {
         }
         rs.close();
         return barChartItemList;
+    }
+
+    public List<PieChartItem> getPieChartItemList(User user, String date) throws Exception {
+        List<PieChartItem> pieChartItemList = new ArrayList<PieChartItem>();
+        String sql = "select kind_id, kind_name from revenue_item_kind order by kind_id asc";
+        
+        dc.openConnection(sql);
+        ps = dc.getPreparedStatement();
+        rs = ps.executeQuery();
+        
+        while (rs.next()) {
+            PieChartItem pci = new PieChartItem(rs.getInt("kind_id"), rs.getString("kind_name"));
+            pieChartItemList.add(pci);
+        }
+        
+        sql = "select rk.kind_id, rk.kind_name, sum(ri.price * ri.count) as sum "
+                + "from users as u, revenue_block as rb, revenue_item as ri, "
+                + "revenue_item_kind as rk where u.user_id = rb.user_id "
+                + "and rb.block_id = ri.block_id and ri.kind_id = rk.kind_id "
+                + "and date between now() - interval 11 month and now() "
+                + "group by ri.kind_id";
+        
+        dc.openConnection(sql);
+        ps = dc.getPreparedStatement();
+        rs = ps.executeQuery();
+        
+        if (!rs.next()) {
+            rs.close();
+            return pieChartItemList;
+        }
+
+        for (PieChartItem pci : pieChartItemList) {
+            if (pci.getKindId() == rs.getInt("kind_id")) {
+                pci.setPrice(rs.getInt("sum"));
+                if (!rs.next()) {
+                    break;
+                }
+            }
+        }
+        rs.close();
+        
+        return pieChartItemList;
     }
 }

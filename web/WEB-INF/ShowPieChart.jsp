@@ -7,6 +7,6 @@
     </head>
     <body>
         ${requestScope['map']}
-        <img src="chart.jpg" usemap="#map" border="0" />
+        <img src="chart.jpg?action=<%=request.getParameter("action")%>" usemap="#map" border="0" />
     </body>
 </html>
