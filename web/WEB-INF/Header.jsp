@@ -24,8 +24,8 @@
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">分析<span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li class="dropdown-header">円グラフ</li>
-                                <li><a href="?action=show_rev_pie&date=2016-12-07">今月の収入</a></li>
-                                <li><a href="?action=show_spe_pie&date=2016-12-07">今月の支出</a></li>
+                                <li><a href="?action=show_rev_pie">今月の収入</a></li>
+                                <li><a href="?action=show_spe_pie">今月の支出</a></li>
                                 <li role="separator" class="divider"></li>
                                 <li class="dropdown-header">棒グラフ</li>
                                 <li><a href="?action=show_rev_bar&category=1&date=2016-12-07">今年の収入</a></li>

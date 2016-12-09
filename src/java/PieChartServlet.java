@@ -7,6 +7,8 @@ import accountbook.User;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -53,6 +55,12 @@ public class PieChartServlet extends HttpServlet {
             String action = request.getParameter("action");
             String date = request.getParameter("date");
 
+            if (date == null) {
+                Date d = new Date();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
+                date = sdf.format(d);
+            }
+            
             if (action.equals("show_rev_pie")) {
                 pieChartItemList = getRevenuePieCharItem(user, rm, date);
             } else if (action.equals("show_spe_pie")) {

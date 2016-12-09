@@ -99,13 +99,30 @@ public class SpendingManager {
         if (rs.next()) {
             for (int i = -11; i < 1; i++) {
                 BarChartItem bci = new BarChartItem(rs.getString("kind_name"),
-                        (Integer.parseInt(dateArray[1]) + i > 0)? 
-                                String.format("%s/%d", dateArray[0], Integer.parseInt(dateArray[1]) + i)
-                                : String.format("%d/%d", Integer.parseInt(dateArray[0]) - 1, Integer.parseInt(dateArray[1]) + i + 12));
+                        (Integer.parseInt(dateArray[1]) + i > 0)
+                        ? String.format("%s/%d", dateArray[0], Integer.parseInt(dateArray[1]) + i)
+                        : String.format("%d/%d", Integer.parseInt(dateArray[0]) - 1, Integer.parseInt(dateArray[1]) + i + 12));
                 barChartItemList.add(bci);
             }
         }
 
+        if (date == null) {
+            java.util.Date d = new java.util.Date();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
+            date = sdf.format(d);
+        }
+
+        sql = "select day(sb.date) as d, sum(si.price * si.count) as sum "
+                + "from users as u, spending_block as sb, spending_item as si, "
+                + "spending_item_kind as sk where u.user_id = sb.user_id "
+                + "and sb.block_id = si.block_id and si.kind_id = sk.kind_id "
+                + "and u.user_id = ? and date_format(sb.date, '%Y%m') = ? "
+                + "and sk.kind_id = ? group by day(sb.date)";
+
+        ps.setInt(1, user.getUser_id());
+        ps.setString(2, date);
+        ps.setInt(3, kind);
+        
         sql = "select date_format(sb.date, '%Y-%m') as month, sk.kind_name, sum(price * count) "
                 + "as sum from users as u, spending_block as sb, "
                 + "spending_item as si, spending_item_kind as sk "
@@ -144,27 +161,29 @@ public class SpendingManager {
     public List<PieChartItem> getPieChartItemList(User user, String date) throws Exception {
         List<PieChartItem> pieChartItemList = new ArrayList<PieChartItem>();
         String sql = "select kind_id, kind_name from spending_item_kind order by kind_id asc";
-        
+
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
         rs = ps.executeQuery();
-        
+
         while (rs.next()) {
             PieChartItem pci = new PieChartItem(rs.getInt("kind_id"), rs.getString("kind_name"));
             pieChartItemList.add(pci);
         }
-        
+
         sql = "select sk.kind_id, sk.kind_name, sum(si.price * si.count) as sum "
                 + "from users as u, spending_block as sb, spending_item as si, "
                 + "spending_item_kind as sk where u.user_id = sb.user_id "
                 + "and sb.block_id = si.block_id and si.kind_id = sk.kind_id "
-                + "and date between now() - interval 11 month and now() "
-                + "group by si.kind_id";
-        
+                + "and u.user_id = ? and date_format(sb.date, '%Y%m') = ? "
+                + "group by sk.kind_id";
+
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
+        ps.setInt(1, user.getUser_id());
+        ps.setString(2, date);
         rs = ps.executeQuery();
-        
+
         if (!rs.next()) {
             rs.close();
             return pieChartItemList;
@@ -179,7 +198,7 @@ public class SpendingManager {
             }
         }
         rs.close();
-        
+
         return pieChartItemList;
     }
 }

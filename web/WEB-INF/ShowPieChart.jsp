@@ -12,7 +12,7 @@
         <%@include file="Header.jsp"%>
         <div class="container theme-showcase" role="main">
             ${requestScope['map']}
-            <img src="chart.jpg?action=<%=request.getParameter("action")%>" usemap="#map" border="0" />
+            <img src="chart.jpg?action=<%=request.getParameter("action")%><% if (request.getParameter("date") != null) {%>&date=<%=request.getParameter("date")%><%}%>" usemap="#map" border="0" />
         </div>
     </body>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>

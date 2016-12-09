@@ -1,6 +1,7 @@
 
 import accountbook.*;
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.*;
 import javax.servlet.*;
@@ -393,10 +394,18 @@ public class AccountBookServlet extends HttpServlet {
         try {
             List<PieChartItem> pieChartItemList = null;
 
+            String date = req.getParameter("date");
+            
+            if (date == null) {
+                Date d = new Date();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
+                date = sdf.format(d);
+            }
+            
             if (req.getParameter("action").equals("show_rev_pie")) {
-                pieChartItemList = rm.getPieChartItemList(user, "");
+                pieChartItemList = rm.getPieChartItemList(user, date);
             } else if (req.getParameter("action").equals("show_spe_pie")) {
-                pieChartItemList = sm.getPieChartItemList(user, "");
+                pieChartItemList = sm.getPieChartItemList(user, date);
             }
 
             ChartFactory.setChartTheme(StandardChartTheme.createLegacyTheme());
@@ -407,7 +416,7 @@ public class AccountBookServlet extends HttpServlet {
             JFreeChart objCht = ChartFactory.createPieChart3D("", objDpd, true, true, true);
             // クリッカブル・マップ用のリンクを生成
             PiePlot objPp = (PiePlot) objCht.getPlot();
-            objPp.setURLGenerator(new StandardPieURLGenerator("?action=" + (req.getParameter("action").equals("show_rev_pie") ? "show_rev_bar" : "show_spe_bar") + "&date=2016-12-07"));
+            objPp.setURLGenerator(new StandardPieURLGenerator("?action=" + (req.getParameter("action").equals("show_rev_pie") ? "show_rev_bar" : "show_spe_bar")));
             // マップ用に生成された画像を保存するためにダミー・ファイルを生成
             File objFl = File.createTempFile("tips", ".jpg");
 

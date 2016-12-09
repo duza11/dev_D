@@ -160,14 +160,16 @@ public class RevenueManager {
         }
         
         sql = "select rk.kind_id, rk.kind_name, sum(ri.price * ri.count) as sum "
-                + "from users as u, revenue_block as rb, revenue_item as ri, "
-                + "revenue_item_kind as rk where u.user_id = rb.user_id "
+                + "from users as u, spending_block as rb, spending_item as ri, "
+                + "spending_item_kind as rk where u.user_id = rb.user_id "
                 + "and rb.block_id = ri.block_id and ri.kind_id = rk.kind_id "
-                + "and date between now() - interval 11 month and now() "
-                + "group by ri.kind_id";
+                + "and u.user_id = ? and date_format(rb.date, '%Y%m') = ? "
+                + "group by rk.kind_id";
         
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
+        ps.setInt(1, user.getUser_id());
+        ps.setString(2, date);
         rs = ps.executeQuery();
         
         if (!rs.next()) {
