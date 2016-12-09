@@ -23,7 +23,7 @@ public class BarChartServlet extends HttpServlet {
 
     private static String DB_NAME = "account_book";               // DB名
     private static String DB_USER = "root";                  // DBのユーザ名
-    private static String DB_PASS = "duza11";
+    private static String DB_PASS = "root";
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

@@ -27,7 +27,7 @@ public class PieChartServlet extends HttpServlet {
 
     private static String DB_NAME = "account_book";
     private static String DB_USER = "root";
-    private static String DB_PASS = "duza11";
+    private static String DB_PASS = "root";
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -72,7 +72,7 @@ public class PieChartServlet extends HttpServlet {
             // データセット、判例を表示するか、ツールチップを
             // 表示するか、URLを動的に生成するかを指定）
             JFreeChart objCht = ChartFactory.createPieChart3D(
-                    "サイトアクセスログ", objDpd, true, false, false);
+                    "", objDpd, true, false, false);
 
             // バイナリ出力ストリームにJPEG形式で画像を出力
             // 600×400ピクセル）

@@ -18,7 +18,7 @@ public class AccountBookServlet extends HttpServlet {
 
     private static String DB_NAME = "account_book";               // DB名
     private static String DB_USER = "root";                  // DBのユーザ名
-    private static String DB_PASS = "duza11";                  // DBのパスワード
+    private static String DB_PASS = "root";                  // DBのパスワード
 
     // ログインのビューを担当
     private static String LOGIN_JSP = "/WEB-INF/Login.jsp";
@@ -115,53 +115,49 @@ public class AccountBookServlet extends HttpServlet {
                 // 新規ユーザの登録処理を実行
                 nextView = registration(um, req);
 
-            } else // 以下は先にログインしている必要がある処理
-            {
-                if (user == null) {
-                    /*
+            } else if (user == null) {
+                /*
 		     * カートオブジェクトが無い場合はログインしていないと判断し，
 		     * 強制的にログインページへ遷移
-                     */
-                    req.setAttribute("message", "先にログインしてください");
-                    nextView = LOGIN_JSP;
+                 */
+                req.setAttribute("message", "先にログインしてください");
+                nextView = LOGIN_JSP;
 
-                } else if (action.equals("show_calendar") || action.equals("")) {
-                    setDateArray(rm, sm, user, req);
-                    nextView = TOP_JSP;
-                    // 商品一覧を表示
+            } else if (action.equals("show_calendar") || action.equals("")) {
+                setDateArray(rm, sm, user, req);
+                nextView = TOP_JSP;
+                // 商品一覧を表示
 //                    nextView = showItems(im, req);
-                } else if (action.equals("show_rev_pie")) {
-                    createPieChart(user, rm, sm, req);
-                    nextView = SHOW_PIE_CHART;
-                } else if (action.equals("show_spe_pie")) {
-                    createPieChart(user, rm ,sm, req);
-                    nextView = SHOW_PIE_CHART;
-                } else if (action.equals("show_rev_bar")) {
-                    nextView = SHOW_BAR_CHART;
-                } else if (action.equals("show_spe_bar")) {
-                    nextView = SHOW_BAR_CHART;
-                } else if (action.equals("input_rev")) {
-                    setRevenueItemKindMap(rm, req);
-                    nextView = INPUT_REVENUE;
-                } else if (action.equals("input_spe")) {
-                    setSpendingItemKindMap(sm, req);
-                    nextView = INPUT_SPENDING;
-                } else if (action.equals("register_rev")) {
-                    registerRevenue(user, rm, req);
-                    setDateArray(rm, sm, user, req);
-                    nextView = TOP_JSP;
-                } else if (action.equals("register_spe")) {
-                    registerSpending(user, sm, req);
-                    setDateArray(rm, sm, user, req);
-                    nextView = TOP_JSP;
-                } else if (action.equals("withdraw")) {
-                    nextView = withdraw(um, req);
-                } else {
+            } else if (action.equals("show_rev_pie")) {
+                createPieChart(user, rm, sm, req);
+                nextView = SHOW_PIE_CHART;
+            } else if (action.equals("show_spe_pie")) {
+                createPieChart(user, rm, sm, req);
+                nextView = SHOW_PIE_CHART;
+            } else if (action.equals("show_rev_bar")) {
+                nextView = SHOW_BAR_CHART;
+            } else if (action.equals("show_spe_bar")) {
+                nextView = SHOW_BAR_CHART;
+            } else if (action.equals("input_rev")) {
+                setRevenueItemKindMap(rm, req);
+                nextView = INPUT_REVENUE;
+            } else if (action.equals("input_spe")) {
+                setSpendingItemKindMap(sm, req);
+                nextView = INPUT_SPENDING;
+            } else if (action.equals("register_rev")) {
+                registerRevenue(user, rm, req);
+                setDateArray(rm, sm, user, req);
+                nextView = TOP_JSP;
+            } else if (action.equals("register_spe")) {
+                registerSpending(user, sm, req);
+                setDateArray(rm, sm, user, req);
+                nextView = TOP_JSP;
+            } else if (action.equals("withdraw")) {
+                nextView = withdraw(um, req);
+            } else {
 
-                    // 要求に該当する処理が無い場合
-                    nextView = "";
-
-                }
+                // 要求に該当する処理が無い場合
+                nextView = "";
             }
 
             if (nextView.equals("")) {
@@ -402,16 +398,16 @@ public class AccountBookServlet extends HttpServlet {
             } else if (req.getParameter("action").equals("show_spe_pie")) {
                 pieChartItemList = sm.getPieChartItemList(user, "");
             }
-            
+
             ChartFactory.setChartTheme(StandardChartTheme.createLegacyTheme());
             DefaultPieDataset objDpd = new DefaultPieDataset();
             for (PieChartItem pci : pieChartItemList) {
                 objDpd.setValue(Integer.toString(pci.getKindId()), pci.getPrice());
             }
-            JFreeChart objCht = ChartFactory.createPieChart3D("サイトアクセスログ", objDpd, true, true, true);
+            JFreeChart objCht = ChartFactory.createPieChart3D("", objDpd, true, true, true);
             // クリッカブル・マップ用のリンクを生成
             PiePlot objPp = (PiePlot) objCht.getPlot();
-            objPp.setURLGenerator(new StandardPieURLGenerator("?action=" + (req.getParameter("action").equals("show_rev_pie")? "show_rev_bar" : "show_spe_bar") + "&date=2016-12-07"));
+            objPp.setURLGenerator(new StandardPieURLGenerator("?action=" + (req.getParameter("action").equals("show_rev_pie") ? "show_rev_bar" : "show_spe_bar") + "&date=2016-12-07"));
             // マップ用に生成された画像を保存するためにダミー・ファイルを生成
             File objFl = File.createTempFile("tips", ".jpg");
 

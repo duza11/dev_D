@@ -3,10 +3,18 @@
 <html lang="ja">
     <head>
         <meta charset="utf-8">
-        <title>JFreeChartによるクリッカブル・マップの作成</title>
+        <title>円グラフ</title>
+        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+        <link href="css/theme.css" rel="stylesheet">
     </head>
     <body>
-        ${requestScope['map']}
-        <img src="chart.jpg?action=<%=request.getParameter("action")%>" usemap="#map" border="0" />
+        <%@include file="Header.jsp"%>
+        <div class="container theme-showcase" role="main">
+            ${requestScope['map']}
+            <img src="chart.jpg?action=<%=request.getParameter("action")%>" usemap="#map" border="0" />
+        </div>
     </body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </html>

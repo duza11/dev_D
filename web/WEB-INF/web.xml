@@ -9,10 +9,6 @@
         <servlet-class>PieChartServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>ChartMapServlet</servlet-name>
-        <servlet-class>ChartMapServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>BarChartServlet</servlet-name>
         <servlet-class>BarChartServlet</servlet-class>
     </servlet>
@@ -23,10 +19,6 @@
     <servlet-mapping>
         <servlet-name>ChartServlet</servlet-name>
         <url-pattern>/chart.jpg</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ChartMapServlet</servlet-name>
-        <url-pattern>/ChartMapServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>BarChartServlet</servlet-name>
