@@ -28,8 +28,8 @@
                                 <li><a href="?action=show_spe_pie">今月の支出</a></li>
                                 <li role="separator" class="divider"></li>
                                 <li class="dropdown-header">棒グラフ</li>
-                                <li><a href="?action=show_rev_bar&category=1&date=2016-12-07">今年の収入</a></li>
-                                <li><a href="?action=show_spe_bar&category=1&date=2016-12-07">今年の支出</a></li>
+                                <li><a href="?action=show_rev_bar&category=1">今月の収入</a></li>
+                                <li><a href="?action=show_spe_bar&category=1">今月の支出</a></li>
                             </ul>
                         </li>
                     </ul>

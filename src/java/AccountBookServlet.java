@@ -136,8 +136,10 @@ public class AccountBookServlet extends HttpServlet {
                 createPieChart(user, rm, sm, req);
                 nextView = SHOW_PIE_CHART;
             } else if (action.equals("show_rev_bar")) {
+                createBarChart(user, rm, sm, req);
                 nextView = SHOW_BAR_CHART;
             } else if (action.equals("show_spe_bar")) {
+                createBarChart(user, rm, sm, req);
                 nextView = SHOW_BAR_CHART;
             } else if (action.equals("input_rev")) {
                 setRevenueItemKindMap(rm, req);
@@ -395,17 +397,17 @@ public class AccountBookServlet extends HttpServlet {
             List<PieChartItem> pieChartItemList = null;
 
             String date = req.getParameter("date");
-            
-            if (date == null) {
-                Date d = new Date();
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
-                date = sdf.format(d);
-            }
-            
+
             if (req.getParameter("action").equals("show_rev_pie")) {
                 pieChartItemList = rm.getPieChartItemList(user, date);
             } else if (req.getParameter("action").equals("show_spe_pie")) {
                 pieChartItemList = sm.getPieChartItemList(user, date);
+            }
+
+            if (date == null) {
+                java.util.Date d = new java.util.Date();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+                date = sdf.format(d);
             }
 
             ChartFactory.setChartTheme(StandardChartTheme.createLegacyTheme());
@@ -416,7 +418,7 @@ public class AccountBookServlet extends HttpServlet {
             JFreeChart objCht = ChartFactory.createPieChart3D("", objDpd, true, true, true);
             // クリッカブル・マップ用のリンクを生成
             PiePlot objPp = (PiePlot) objCht.getPlot();
-            objPp.setURLGenerator(new StandardPieURLGenerator("?action=" + (req.getParameter("action").equals("show_rev_pie") ? "show_rev_bar" : "show_spe_bar")));
+            objPp.setURLGenerator(new StandardPieURLGenerator("?action=" + (req.getParameter("action").equals("show_rev_pie") ? "show_rev_bar" : "show_spe_bar") + "&date=" + date));
             // マップ用に生成された画像を保存するためにダミー・ファイルを生成
             File objFl = File.createTempFile("tips", ".jpg");
 
@@ -427,9 +429,22 @@ public class AccountBookServlet extends HttpServlet {
             // リクエスト属性"map"に<map>タグを含む文字列データをセット
             req.setAttribute("map", ChartUtilities.getImageMap("map", objCri));
 //            this.getServletContext().getRequestDispatcher("/chart.jsp").forward(req, response);
+            req.setAttribute("date", date);
         } catch (IOException ex) {
             Logger.getLogger(AccountBookServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    private void createBarChart(User user, RevenueManager rm, SpendingManager sm, HttpServletRequest req) {
+        String date = req.getParameter("date");
+
+        if (date == null) {
+            java.util.Date d = new java.util.Date();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+            date = sdf.format(d);
+        }
+        
+        req.setAttribute("date", date);
     }
 
     /**

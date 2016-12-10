@@ -3,6 +3,7 @@ package accountbook;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +29,7 @@ public class SpendingManager {
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
         ps.setInt(1, user.getUser_id());
-        ps.setString(2, String.format("%d%d", year, month));
+        ps.setString(2, String.format("%d%02d", year, month));
         rs = ps.executeQuery();
 
         if (!rs.next()) {
@@ -89,55 +90,42 @@ public class SpendingManager {
 
     public List<BarChartItem> getBarChartItemList(User user, int kind, String date) throws Exception {
         List<BarChartItem> barChartItemList = new ArrayList<BarChartItem>();
+        
+        if (date == null) {
+            java.util.Date d = new java.util.Date();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+            date = sdf.format(d);
+        }
+        String dateArray[] = date.split("-");
+        
+        Calendar c = Calendar.getInstance();
+        c.set(Integer.parseInt(dateArray[0]), Integer.parseInt(dateArray[1]) - 1, 1);
+        int maxDate = c.getActualMaximum(Calendar.DATE);
         String sql = "select kind_name from spending_item_kind where kind_id = ?";
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
         ps.setInt(1, kind);
         rs = ps.executeQuery();
-        String dateArray[] = date.split("-");
 
         if (rs.next()) {
-            for (int i = -11; i < 1; i++) {
-                BarChartItem bci = new BarChartItem(rs.getString("kind_name"),
-                        (Integer.parseInt(dateArray[1]) + i > 0)
-                        ? String.format("%s/%d", dateArray[0], Integer.parseInt(dateArray[1]) + i)
-                        : String.format("%d/%d", Integer.parseInt(dateArray[0]) - 1, Integer.parseInt(dateArray[1]) + i + 12));
+            for (int i = 1; i <= maxDate; i++) {
+                BarChartItem bci = new BarChartItem(rs.getString("kind_name"), Integer.toString(i));
                 barChartItemList.add(bci);
             }
-        }
-
-        if (date == null) {
-            java.util.Date d = new java.util.Date();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
-            date = sdf.format(d);
         }
 
         sql = "select day(sb.date) as d, sum(si.price * si.count) as sum "
                 + "from users as u, spending_block as sb, spending_item as si, "
                 + "spending_item_kind as sk where u.user_id = sb.user_id "
                 + "and sb.block_id = si.block_id and si.kind_id = sk.kind_id "
-                + "and u.user_id = ? and date_format(sb.date, '%Y%m') = ? "
+                + "and u.user_id = ? and date_format(sb.date, '%Y-%m') = ? "
                 + "and sk.kind_id = ? group by day(sb.date)";
-
-        ps.setInt(1, user.getUser_id());
-        ps.setString(2, date);
-        ps.setInt(3, kind);
-        
-        sql = "select date_format(sb.date, '%Y-%m') as month, sk.kind_name, sum(price * count) "
-                + "as sum from users as u, spending_block as sb, "
-                + "spending_item as si, spending_item_kind as sk "
-                + "where u.user_id = sb.user_id and sb.block_id = si.block_id "
-                + "and si.kind_id = sk.kind_id and u.user_id = ? and sk.kind_id = ? "
-                + "and date_format(date, '%Y-%m') "
-                + "between date_format(? - interval 11 month, '%Y-%m') "
-                + "and date_format(?, '%Y-%m') group by month(sb.date)";
 
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
         ps.setInt(1, user.getUser_id());
-        ps.setInt(2, kind);
-        ps.setDate(3, new Date(new SimpleDateFormat("yyyy-MM-dd").parse(date).getTime()));
-        ps.setDate(4, new Date(new SimpleDateFormat("yyyy-MM-dd").parse(date).getTime()));
+        ps.setString(2, date);
+        ps.setInt(3, kind);
         rs = ps.executeQuery();
 
         if (!rs.next()) {
@@ -146,8 +134,7 @@ public class SpendingManager {
         }
 
         for (BarChartItem bci : barChartItemList) {
-            if (new SimpleDateFormat("yyyy/MM").parse(bci.getMonth()).
-                    compareTo(new SimpleDateFormat("yyyy-MM").parse(rs.getString("month"))) == 0) {
+            if (rs.getString("d").equals(bci.getDay())) {
                 bci.setPrice(rs.getInt("sum"));
                 if (!rs.next()) {
                     break;
@@ -171,11 +158,17 @@ public class SpendingManager {
             pieChartItemList.add(pci);
         }
 
+        if (date == null) {
+            java.util.Date d = new java.util.Date();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+            date = sdf.format(d);
+        }
+
         sql = "select sk.kind_id, sk.kind_name, sum(si.price * si.count) as sum "
                 + "from users as u, spending_block as sb, spending_item as si, "
                 + "spending_item_kind as sk where u.user_id = sb.user_id "
                 + "and sb.block_id = si.block_id and si.kind_id = sk.kind_id "
-                + "and u.user_id = ? and date_format(sb.date, '%Y%m') = ? "
+                + "and u.user_id = ? and date_format(sb.date, '%Y-%m') = ? "
                 + "group by sk.kind_id";
 
         dc.openConnection(sql);

@@ -1,5 +1,17 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
+<jsp:useBean id="date" class="java.lang.String" scope="request" />
+
+<%
+    int[] dateArray = new int[2];
+    for (int i = 0; i < dateArray.length; i++) {
+        dateArray[i] = Integer.parseInt(date.split("-")[i]);
+    }
+    int previousMonth = (dateArray[1] - 2 + 12) % 12 + 1;
+    int previousYear = dateArray[0] - previousMonth / 12;
+    int nextMonth = dateArray[1] % 12 + 1;
+    int nextYear = dateArray[0] + dateArray[1] / 12;
+%>
 <html lang="ja">
     <head>
         <meta charset="utf-8">
@@ -11,6 +23,10 @@
     <body>
         <%@include file="Header.jsp"%>
         <div class="container theme-showcase" role="main">
+            <p>
+                <a href="?action=<%=request.getParameter("action")%>&date=<%=previousYear%>-<%=String.format("%02d", previousMonth)%>">先月</a>
+                <a href="?action=<%=request.getParameter("action")%>&date=<%=nextYear%>-<%=String.format("%02d", nextMonth)%>">翌月</a>
+            </p>
             ${requestScope['map']}
             <img src="chart.jpg?action=<%=request.getParameter("action")%><% if (request.getParameter("date") != null) {%>&date=<%=request.getParameter("date")%><%}%>" usemap="#map" border="0" />
         </div>

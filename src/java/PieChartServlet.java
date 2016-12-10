@@ -4,11 +4,7 @@ import accountbook.PieChartItem;
 import accountbook.RevenueManager;
 import accountbook.SpendingManager;
 import accountbook.User;
-import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -16,13 +12,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.StandardChartTheme;
-import org.jfree.chart.entity.StandardEntityCollection;
-import org.jfree.chart.plot.PiePlot;
-import org.jfree.chart.urls.StandardPieURLGenerator;
 import org.jfree.data.general.DefaultPieDataset;
 
 public class PieChartServlet extends HttpServlet {
@@ -54,12 +46,6 @@ public class PieChartServlet extends HttpServlet {
 
             String action = request.getParameter("action");
             String date = request.getParameter("date");
-
-            if (date == null) {
-                Date d = new Date();
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
-                date = sdf.format(d);
-            }
             
             if (action.equals("show_rev_pie")) {
                 pieChartItemList = getRevenuePieCharItem(user, rm, date);

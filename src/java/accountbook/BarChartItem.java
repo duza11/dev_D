@@ -4,11 +4,12 @@ public class BarChartItem {
     int price;
     String kind;
     String month;
+    String day;
 
-    public BarChartItem(String kind, String month) {
+    public BarChartItem(String kind, String day) {
         this.price = 0;
         this.kind = kind;
-        this.month = month;
+        this.day = day;
     }
 
     public BarChartItem(int price, String kind, String month) {
@@ -39,5 +40,13 @@ public class BarChartItem {
 
     public void setMonth(String month) {
         this.month = month;
+    }
+
+    public String getDay() {
+        return day;
+    }
+
+    public void setDay(String day) {
+        this.day = day;
     }
 }

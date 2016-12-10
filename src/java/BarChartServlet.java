@@ -16,6 +16,8 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.StandardChartTheme;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 
@@ -58,12 +60,17 @@ public class BarChartServlet extends HttpServlet {
 
             DefaultCategoryDataset objDcd = new DefaultCategoryDataset();
             for (BarChartItem bci : barChartItemList) {
-                objDcd.addValue(bci.getPrice(), bci.getKind(), bci.getMonth());
+                objDcd.addValue(bci.getPrice(), bci.getKind(), bci.getDay());
             }
 
             ChartFactory.setChartTheme(StandardChartTheme.createLegacyTheme());
-            JFreeChart objCht = ChartFactory.createBarChart("", "月", "金額", objDcd, PlotOrientation.VERTICAL, true, false, false);
+            JFreeChart objCht = ChartFactory.createBarChart("", "日", "金額", objDcd, PlotOrientation.VERTICAL, true, false, false);
 
+            CategoryPlot cp = (CategoryPlot) objCht.getPlot();
+            NumberAxis na = (NumberAxis) cp.getRangeAxis();
+            na.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+            na.setLowerBound(0);
+            
             response.setContentType("image/jpeg");
             ServletOutputStream objSos = response.getOutputStream();
             ChartUtilities.writeChartAsJPEG(objSos, objCht, 720, 480);
