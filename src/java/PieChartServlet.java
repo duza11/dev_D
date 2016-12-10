@@ -59,7 +59,7 @@ public class PieChartServlet extends HttpServlet {
 
             // データセットに項目名と値のを順にセット
             for (PieChartItem pci : pieChartItemList) {
-                objDpd.setValue(pci.getKindName(), pci.getPrice());
+                objDpd.setValue(pci.getKindId() + ":" + pci.getKindName(), pci.getPrice());
             }
 
             // 3次元円グラフを生成（第1引数からグラフタイトル、
