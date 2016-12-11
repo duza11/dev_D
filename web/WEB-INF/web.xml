@@ -12,6 +12,14 @@
         <servlet-name>BarChartServlet</servlet-name>
         <servlet-class>BarChartServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>SampleServlet</servlet-name>
+        <servlet-class>SampleServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>SampleMapServlet</servlet-name>
+        <servlet-class>SampleMapServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>AccountBookServlet</servlet-name>
         <url-pattern>/AccountBookServlet</url-pattern>
@@ -23,5 +31,13 @@
     <servlet-mapping>
         <servlet-name>BarChartServlet</servlet-name>
         <url-pattern>/barchart.jpg</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SampleServlet</servlet-name>
+        <url-pattern>/SampleServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SampleMapServlet</servlet-name>
+        <url-pattern>/SampleMapServlet</url-pattern>
     </servlet-mapping>
 </web-app>

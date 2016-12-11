@@ -114,7 +114,7 @@ public class SpendingManager {
             }
         }
 
-        sql = "select day(sb.date) as d, sum(si.price * si.count) as sum "
+        sql = "select day(sb.date) as day, sum(si.price * si.count) as sum "
                 + "from users as u, spending_block as sb, spending_item as si, "
                 + "spending_item_kind as sk where u.user_id = sb.user_id "
                 + "and sb.block_id = si.block_id and si.kind_id = sk.kind_id "
@@ -134,7 +134,7 @@ public class SpendingManager {
         }
 
         for (BarChartItem bci : barChartItemList) {
-            if (rs.getString("d").equals(bci.getDay())) {
+            if (rs.getString("day").equals(bci.getDay())) {
                 bci.setPrice(rs.getInt("sum"));
                 if (!rs.next()) {
                     break;
@@ -144,7 +144,66 @@ public class SpendingManager {
         rs.close();
         return barChartItemList;
     }
+    
+    public List<BarChartItem> getStackedBarChartItemList(User user, int kind, String date) throws Exception {
+        List<BarChartItem> barChartItemList = new ArrayList<BarChartItem>();
+        
+        if (date == null) {
+            java.util.Date d = new java.util.Date();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+            date = sdf.format(d);
+        }
+        String dateArray[] = date.split("-");
+        
+        Calendar c = Calendar.getInstance();
+        c.set(Integer.parseInt(dateArray[0]), Integer.parseInt(dateArray[1]) - 1, 1);
+        int maxDate = c.getActualMaximum(Calendar.DATE);
+        
+        String sql = "select kind_id, kind_name from spending_item_kind order by kind_id asc";
+        
+        dc.openConnection(sql);
+        ps = dc.getPreparedStatement();
+        
+        for (int i = 1; i <= maxDate; i++) {
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                BarChartItem bci = new BarChartItem(rs.getString("kind_name"), Integer.toString(i));
+                barChartItemList.add(bci);
+            }
+        }
+        
+        sql = "select sk.kind_id, sk.kind_name, day(sb.date) day, sum(si.price * si.count) sum "
+                + "from users u, spending_block sb, spending_item si, spending_item_kind sk "
+                + "where u.user_id = sb.user_id and sb.block_id = si.block_id "
+                + "and si.kind_id = sk.kind_id and u.user_id = ? "
+                + "and date_format(sb.date, '%Y-%m') = ? group by day, sk.kind_id "
+                + "order by day, kind_id asc;";
+        
+        dc.openConnection(sql);
+        ps = dc.getPreparedStatement();
+        ps.setInt(1, user.getUser_id());
+        ps.setString(2, date);
+        rs = ps.executeQuery();
+        
+        if (!rs.next()) {
+            rs.close();
+            return barChartItemList;
+        }
 
+        for (BarChartItem bci : barChartItemList) {
+            if (rs.getString("day").equals(bci.getDay()) && rs.getString("kind_name").equals(bci.getKind())) {
+                bci.setPrice(rs.getInt("sum"));
+                if (!rs.next()) {
+                    break;
+                }
+            }
+        }
+        
+        rs.close();
+        
+        return barChartItemList;
+    }
+    
     public List<PieChartItem> getPieChartItemList(User user, String date) throws Exception {
         List<PieChartItem> pieChartItemList = new ArrayList<PieChartItem>();
         String sql = "select kind_id, kind_name from spending_item_kind order by kind_id asc";

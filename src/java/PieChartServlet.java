@@ -61,7 +61,7 @@ public class PieChartServlet extends HttpServlet {
             for (PieChartItem pci : pieChartItemList) {
                 objDpd.setValue(pci.getKindId() + ":" + pci.getKindName(), pci.getPrice());
             }
-
+            
             // 3次元円グラフを生成（第1引数からグラフタイトル、
             // データセット、判例を表示するか、ツールチップを
             // 表示するか、URLを動的に生成するかを指定）

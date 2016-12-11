@@ -29,7 +29,6 @@ public class RevenueManager {
                 + "and u.user_id = ? "
                 + "and (date_format(date, '%Y%m') = ?) group by rb.date;";
 
-        System.out.println("\n\n" + user.getUser_id());
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
         ps.setInt(1, user.getUser_id());
@@ -147,6 +146,65 @@ public class RevenueManager {
             }
         }
         rs.close();
+        return barChartItemList;
+    }
+    
+    public List<BarChartItem> getStackedBarChartItemList(User user, int kind, String date) throws Exception {
+        List<BarChartItem> barChartItemList = new ArrayList<BarChartItem>();
+        
+        if (date == null) {
+            java.util.Date d = new java.util.Date();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+            date = sdf.format(d);
+        }
+        String dateArray[] = date.split("-");
+        
+        Calendar c = Calendar.getInstance();
+        c.set(Integer.parseInt(dateArray[0]), Integer.parseInt(dateArray[1]) - 1, 1);
+        int maxDate = c.getActualMaximum(Calendar.DATE);
+        
+        String sql = "select kind_id, kind_name from revenue_item_kind order by kind_id asc";
+        
+        dc.openConnection(sql);
+        ps = dc.getPreparedStatement();
+        
+        for (int i = 1; i <= maxDate; i++) {
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                BarChartItem bci = new BarChartItem(rs.getString("kind_name"), Integer.toString(i));
+                barChartItemList.add(bci);
+            }
+        }
+        
+        sql = "select rk.kind_id, rk.kind_name, day(rb.date) day, sum(ri.price * ri.count) sum "
+                + "from users u, revenue_block rb, revenue_item ri, revenue_item_kind rk "
+                + "where u.user_id = rb.user_id and rb.block_id = ri.block_id "
+                + "and ri.kind_id = rk.kind_id and u.user_id = ? "
+                + "and date_format(rb.date, '%Y-%m') = ? group by day, rk.kind_id "
+                + "order by day, kind_id asc;";
+        
+        dc.openConnection(sql);
+        ps = dc.getPreparedStatement();
+        ps.setInt(1, user.getUser_id());
+        ps.setString(2, date);
+        rs = ps.executeQuery();
+        
+        if (!rs.next()) {
+            rs.close();
+            return barChartItemList;
+        }
+
+        for (BarChartItem bci : barChartItemList) {
+            if (rs.getString("day").equals(bci.getDay()) && rs.getString("kind_name").equals(bci.getKind())) {
+                bci.setPrice(rs.getInt("sum"));
+                if (!rs.next()) {
+                    break;
+                }
+            }
+        }
+        
+        rs.close();
+        
         return barChartItemList;
     }
 

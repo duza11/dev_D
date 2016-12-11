@@ -5,7 +5,6 @@ import accountbook.RevenueManager;
 import accountbook.SpendingManager;
 import accountbook.User;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -19,6 +18,7 @@ import org.jfree.chart.StandardChartTheme;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 public class BarChartServlet extends HttpServlet {
@@ -53,9 +53,17 @@ public class BarChartServlet extends HttpServlet {
             String date = request.getParameter("date");
 
             if (action.equals("show_rev_bar")) {
-                barChartItemList = getRevenueBarCharItem(user, rm, kind, date);
+                if (kind == 0) {
+                    barChartItemList = rm.getStackedBarChartItemList(user, kind, date);
+                } else {
+                    barChartItemList = getRevenueBarCharItem(user, rm, kind, date);
+                }
             } else if (action.equals("show_spe_bar")) {
-                barChartItemList = getSpendingBarCharItem(user, sm, kind, date);
+                if (kind == 0) {
+                    barChartItemList = sm.getStackedBarChartItemList(user, kind, date);
+                } else {
+                    barChartItemList = getSpendingBarCharItem(user, sm, kind, date);
+                }
             }
 
             DefaultCategoryDataset objDcd = new DefaultCategoryDataset();
@@ -64,13 +72,14 @@ public class BarChartServlet extends HttpServlet {
             }
 
             ChartFactory.setChartTheme(StandardChartTheme.createLegacyTheme());
-            JFreeChart objCht = ChartFactory.createBarChart("", "日", "金額", objDcd, PlotOrientation.VERTICAL, true, false, false);
+            JFreeChart objCht = ChartFactory.createStackedBarChart("", "日", "金額", objDcd, PlotOrientation.VERTICAL, true, false, false);
 
             CategoryPlot cp = (CategoryPlot) objCht.getPlot();
             NumberAxis na = (NumberAxis) cp.getRangeAxis();
             na.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
             na.setLowerBound(0);
-            
+            BarRenderer br = (BarRenderer) cp.getRenderer();
+            br.setShadowVisible(false);
             response.setContentType("image/jpeg");
             ServletOutputStream objSos = response.getOutputStream();
             ChartUtilities.writeChartAsJPEG(objSos, objCht, 720, 480);
