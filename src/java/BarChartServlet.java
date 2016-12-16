@@ -43,6 +43,7 @@ public class BarChartServlet extends HttpServlet {
 
             List<BarChartItem> barChartItemList = null;
             User user = (User) request.getSession(true).getAttribute("user");
+            String dataLabel = "";
 
             if (user == null) {
                 response.sendRedirect("AccountBookServlet");
@@ -54,8 +55,16 @@ public class BarChartServlet extends HttpServlet {
 
             if (action.equals("show_rev_bar")) {
                 barChartItemList = (kind == 0)? rm.getStackedBarChartItemList(user, kind, date) : rm.getBarChartItemList(user, kind, date);
+                dataLabel = "日";
             } else if (action.equals("show_spe_bar")) {
                 barChartItemList = (kind == 0)? sm.getStackedBarChartItemList(user, kind, date) : sm.getBarChartItemList(user, kind, date);
+                dataLabel = "日";
+            } else if (action.equals("show_yearly_rev_bar")) {
+                barChartItemList = (kind == 0)? rm.getYearlyStackedBarChartItemList(user, kind, date) : rm.getYearlyBarChartItemList(user, kind, date);
+                dataLabel = "月";
+            } else if (action.equals("show_yearly_spe_bar")) {
+                barChartItemList = (kind == 0)? sm.getYearlyStackedBarChartItemList(user, kind, date) : sm.getYearlyBarChartItemList(user, kind, date);
+                dataLabel = "月";
             }
 
             DefaultCategoryDataset objDcd = new DefaultCategoryDataset();
@@ -64,7 +73,7 @@ public class BarChartServlet extends HttpServlet {
             }
 
             ChartFactory.setChartTheme(StandardChartTheme.createLegacyTheme());
-            JFreeChart objCht = ChartFactory.createStackedBarChart("", "日", "円", objDcd, PlotOrientation.VERTICAL, true, false, false);
+            JFreeChart objCht = ChartFactory.createStackedBarChart("", dataLabel, "円", objDcd, PlotOrientation.VERTICAL, true, false, false);
             objCht.setBorderVisible(true);
             CategoryPlot cp = (CategoryPlot) objCht.getPlot();
             NumberAxis na = (NumberAxis) cp.getRangeAxis();

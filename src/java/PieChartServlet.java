@@ -41,6 +41,7 @@ public class PieChartServlet extends HttpServlet {
 
             List<PieChartItem> pieChartItemList = null;
             User user = (User) request.getSession(true).getAttribute("user");
+            String dataLabel = "";
 
             if (user == null) {
                 response.sendRedirect("AccountBookServlet");
@@ -51,8 +52,16 @@ public class PieChartServlet extends HttpServlet {
 
             if (action.equals("show_rev_pie")) {
                 pieChartItemList = rm.getPieChartItemList(user, date);
+                dataLabel = "日";
             } else if (action.equals("show_spe_pie")) {
                 pieChartItemList = sm.getPieChartItemList(user, date);
+                dataLabel = "日";
+            } else if (action.equals("show_yearly_rev_pie")) {
+                pieChartItemList = rm.getYearlyPieChartItemList(user, date);
+                dataLabel = "月";
+            } else if (action.equals("show_yearly_spe_pie")) {
+                pieChartItemList = sm.getYearlyPieChartItemList(user, date);
+                dataLabel = "月";
             }
 
             ChartFactory.setChartTheme(StandardChartTheme.createLegacyTheme());

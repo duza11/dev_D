@@ -211,6 +211,112 @@ public class RevenueManager {
         
         return barChartItemList;
     }
+    
+    public List<BarChartItem> getYearlyBarChartItemList(User user, int kind, String date) throws Exception {
+        List<BarChartItem> barChartItemList = new ArrayList<BarChartItem>();
+        
+        if (date == null) {
+            java.util.Date d = new java.util.Date();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
+            date = sdf.format(d);
+        }
+        
+        String sql = "select kind_name from revenue_item_kind where kind_id = ?";
+        dc.openConnection(sql);
+        ps = dc.getPreparedStatement();
+        ps.setInt(1, kind);
+        rs = ps.executeQuery();
+
+        if (rs.next()) {
+            for (int i = 1; i < 13; i++) {
+                BarChartItem bci = new BarChartItem(rs.getString("kind_name"), Integer.toString(i));
+                barChartItemList.add(bci);
+            }
+        }
+
+        sql = "select month(rb.date) as month, sum(ri.price * ri.count) as sum "
+                + "from users as u, revenue_block as rb, revenue_item as ri, "
+                + "revenue_item_kind as rk where u.user_id = rb.user_id "
+                + "and rb.block_id = ri.block_id and ri.kind_id = rk.kind_id "
+                + "and u.user_id = ? and date_format(rb.date, '%Y') = ? "
+                + "and rk.kind_id = ? group by month;";
+
+        dc.openConnection(sql);
+        ps = dc.getPreparedStatement();
+        ps.setInt(1, user.getUser_id());
+        ps.setString(2, date);
+        ps.setInt(3, kind);
+        rs = ps.executeQuery();
+
+        if (!rs.next()) {
+            rs.close();
+            return barChartItemList;
+        }
+
+        for (BarChartItem bci : barChartItemList) {
+            if (rs.getString("month").equals(bci.getDay())) {
+                bci.setPrice(rs.getInt("sum"));
+                if (!rs.next()) {
+                    break;
+                }
+            }
+        }
+        rs.close();
+        return barChartItemList;
+    }
+    
+    public List<BarChartItem> getYearlyStackedBarChartItemList(User user, int kind, String date) throws Exception {
+        List<BarChartItem> barChartItemList = new ArrayList<BarChartItem>();
+        
+        if (date == null) {
+            java.util.Date d = new java.util.Date();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
+            date = sdf.format(d);
+        }
+        
+        String sql = "select kind_id, kind_name from revenue_item_kind order by kind_id asc";
+        
+        dc.openConnection(sql);
+        ps = dc.getPreparedStatement();
+        
+        for (int i = 1; i < 13; i++) {
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                BarChartItem bci = new BarChartItem(rs.getString("kind_name"), Integer.toString(i));
+                barChartItemList.add(bci);
+            }
+        }
+        
+        sql = "select rk.kind_id, rk.kind_name, month(rb.date) month, sum(ri.price * ri.count) sum "
+                + "from users u, revenue_block rb, revenue_item ri, revenue_item_kind rk "
+                + "where u.user_id = rb.user_id and rb.block_id = ri.block_id "
+                + "and ri.kind_id = rk.kind_id and u.user_id = ? "
+                + "and date_format(rb.date, '%Y') = ? group by month, rk.kind_id order by month, kind_id asc";
+        
+        dc.openConnection(sql);
+        ps = dc.getPreparedStatement();
+        ps.setInt(1, user.getUser_id());
+        ps.setString(2, date);
+        rs = ps.executeQuery();
+        
+        if (!rs.next()) {
+            rs.close();
+            return barChartItemList;
+        }
+
+        for (BarChartItem bci : barChartItemList) {
+            if (rs.getString("month").equals(bci.getDay()) && rs.getString("kind_name").equals(bci.getKind())) {
+                bci.setPrice(rs.getInt("sum"));
+                if (!rs.next()) {
+                    break;
+                }
+            }
+        }
+        
+        rs.close();
+        
+        return barChartItemList;
+    }
 
     public List<PieChartItem> getPieChartItemList(User user, String date) throws Exception {
         List<PieChartItem> pieChartItemList = new ArrayList<PieChartItem>();
@@ -243,6 +349,56 @@ public class RevenueManager {
         ps.setInt(1, user.getUser_id());
         ps.setString(2, date);
         ps.setString(3, date);
+        rs = ps.executeQuery();
+
+        if (!rs.next()) {
+            rs.close();
+            return pieChartItemList;
+        }
+
+        for (PieChartItem pci : pieChartItemList) {
+            if (pci.getKindId() == rs.getInt("kind_id")) {
+                pci.setPrice(rs.getInt("sum"));
+                if (!rs.next()) {
+                    break;
+                }
+            }
+        }
+        rs.close();
+
+        return pieChartItemList;
+    }
+    
+    public List<PieChartItem> getYearlyPieChartItemList(User user, String date) throws Exception {
+        List<PieChartItem> pieChartItemList = new ArrayList<PieChartItem>();
+        String sql = "select kind_id, kind_name from revenue_item_kind order by kind_id asc";
+
+        dc.openConnection(sql);
+        ps = dc.getPreparedStatement();
+        rs = ps.executeQuery();
+
+        while (rs.next()) {
+            PieChartItem pci = new PieChartItem(rs.getInt("kind_id"), rs.getString("kind_name"));
+            pieChartItemList.add(pci);
+        }
+
+        if (date == null) {
+            java.util.Date d = new java.util.Date();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
+            date = sdf.format(d);
+        }
+
+        sql = "select rk.kind_id, rk.kind_name, sum(ri.price * ri.count) as sum "
+                + "from users as u, revenue_block as rb, revenue_item as ri, "
+                + "revenue_item_kind as rk where u.user_id = rb.user_id "
+                + "and rb.block_id = ri.block_id and ri.kind_id = rk.kind_id "
+                + "and u.user_id = ? and date_format(rb.date, '%Y') = ? "
+                + "group by rk.kind_id";
+
+        dc.openConnection(sql);
+        ps = dc.getPreparedStatement();
+        ps.setInt(1, user.getUser_id());
+        ps.setString(2, date);
         rs = ps.executeQuery();
 
         if (!rs.next()) {

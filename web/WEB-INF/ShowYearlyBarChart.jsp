@@ -4,17 +4,7 @@
 <jsp:useBean id="user" class="accountbook.User" scope="session" />
 <jsp:useBean id="date" class="java.lang.String" scope="request" />
 <jsp:useBean id="category" type="Map<Integer, String>" scope="request" />
-<%
-    int[] dateArray = new int[2];
-    for (int i = 0; i < dateArray.length; i++) {
-        dateArray[i] = Integer.parseInt(date.split("-")[i]);
-    }
-    int previousMonth = (dateArray[1] - 2 + 12) % 12 + 1;
-    int previousYear = dateArray[0] - previousMonth / 12;
-    int nextMonth = dateArray[1] % 12 + 1;
-    int nextYear = dateArray[0] + dateArray[1] / 12;
-%>
-<html lang="ja">
+<html>
     <head>
         <meta charset="utf-8">
         <script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
@@ -29,8 +19,8 @@
         <div class="container theme-showcase" role="main">
             <h1><%=date%>の<%=request.getParameter("action").equals("show_rev_bar") ? "収入" : "支出"%></h1>
             <p>
-                <a href="?action=<%=request.getParameter("action")%>&category=<%=request.getParameter("category")%>&date=<%=previousYear%>-<%=previousMonth%>">先月</a>
-                <a href="?action=<%=request.getParameter("action")%>&category=<%=request.getParameter("category")%>&date=<%=nextYear%>-<%=nextMonth%>">翌月</a>
+                <a href="?action=<%=request.getParameter("action")%>&category=<%=request.getParameter("category")%>&date=<%=Integer.parseInt(date) - 1%>">前年</a>
+                <a href="?action=<%=request.getParameter("action")%>&category=<%=request.getParameter("category")%>&date=<%=Integer.parseInt(date) + 1%>">翌年</a>
             </p>
             <form id="submit_form" action="?action=<%=request.getParameter("action")%><% if (request.getParameter("date") != null) {%>&date=<%=request.getParameter("date")%><%}%>" method="post">
                 <select id="submit_select" name="category" required>
@@ -49,4 +39,5 @@
     </body>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    </body>
 </html>

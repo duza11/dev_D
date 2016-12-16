@@ -33,6 +33,10 @@ public class AccountBookServlet extends HttpServlet {
     private static String SHOW_PIE_CHART = "/WEB-INF/ShowPieChart.jsp";
     // 棒グラフのビューを担当
     private static String SHOW_BAR_CHART = "/WEB-INF/ShowBarChart.jsp";
+    
+    private static String SHOW_YEARLY_BAR_CHART = "/WEB-INF/ShowYearlyBarChart.jsp";
+    
+    private static String SHOW_YEARLY_PIE_CHART = "/WEB-INF/ShowYearlyPieChart.jsp";
 
     /**
      * サーブレットがPOSTメソッドでアクセスされた際に呼ばれる．
@@ -135,12 +139,24 @@ public class AccountBookServlet extends HttpServlet {
             } else if (action.equals("show_spe_pie")) {
                 createPieChart(user, rm, sm, req);
                 nextView = SHOW_PIE_CHART;
+            } else if (action.equals("show_yearly_rev_pie")) {
+                createYearlyPieChart(user, rm, sm, req);
+                nextView = SHOW_YEARLY_PIE_CHART;
+            } else if (action.equals("show_yearly_spe_pie")) {
+                createYearlyPieChart(user, rm, sm, req);
+                nextView = SHOW_YEARLY_PIE_CHART;
             } else if (action.equals("show_rev_bar")) {
                 createBarChart(user, rm, sm, req);
                 nextView = SHOW_BAR_CHART;
             } else if (action.equals("show_spe_bar")) {
                 createBarChart(user, rm, sm, req);
                 nextView = SHOW_BAR_CHART;
+            } else if (action.equals("show_yearly_rev_bar")) {
+                createYearlyBarChart(user, rm, sm, req);
+                nextView = SHOW_YEARLY_BAR_CHART;
+            } else if (action.equals("show_yearly_spe_bar")) {
+                createYearlyBarChart(user, rm, sm, req);
+                nextView = SHOW_YEARLY_BAR_CHART;
             } else if (action.equals("input_rev")) {
                 setRevenueItemKindMap(rm, req);
                 nextView = INPUT_REVENUE;
@@ -434,6 +450,49 @@ public class AccountBookServlet extends HttpServlet {
             Logger.getLogger(AccountBookServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    private void createYearlyPieChart(User user, RevenueManager rm, SpendingManager sm, HttpServletRequest req) throws Exception {
+        try {
+            List<PieChartItem> pieChartItemList = null;
+
+            String date = req.getParameter("date");
+
+            if (req.getParameter("action").equals("show_yearly_rev_pie")) {
+                pieChartItemList = rm.getYearlyPieChartItemList(user, date);
+            } else if (req.getParameter("action").equals("show_yearly_spe_pie")) {
+                pieChartItemList = sm.getYearlyPieChartItemList(user, date);
+            }
+
+            if (date == null) {
+                java.util.Date d = new java.util.Date();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
+                date = sdf.format(d);
+            }
+
+            ChartFactory.setChartTheme(StandardChartTheme.createLegacyTheme());
+            DefaultPieDataset objDpd = new DefaultPieDataset();
+            for (PieChartItem pci : pieChartItemList) {
+                objDpd.setValue(Integer.toString(pci.getKindId()), pci.getPrice());
+            }
+            JFreeChart objCht = ChartFactory.createPieChart3D("", objDpd, true, true, true);
+            // クリッカブル・マップ用のリンクを生成
+            PiePlot objPp = (PiePlot) objCht.getPlot();
+            objPp.setURLGenerator(new StandardPieURLGenerator("?action=" + (req.getParameter("action").equals("show_yearly_rev_pie") ? "show_yearly_rev_bar" : "show_yearly_spe_bar") + "&date=" + date));
+            // マップ用に生成された画像を保存するためにダミー・ファイルを生成
+            File objFl = File.createTempFile("tips", ".jpg");
+
+            objFl.deleteOnExit();
+            // イメージを生成
+            ChartRenderingInfo objCri = new ChartRenderingInfo(new StandardEntityCollection());
+            ChartUtilities.saveChartAsJPEG(objFl, objCht, 600, 400, objCri);
+            // リクエスト属性"map"に<map>タグを含む文字列データをセット
+            req.setAttribute("map", ChartUtilities.getImageMap("map", objCri));
+//            this.getServletContext().getRequestDispatcher("/chart.jsp").forward(req, response);
+            req.setAttribute("date", date);
+        } catch (IOException ex) {
+            Logger.getLogger(AccountBookServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     private void createBarChart(User user, RevenueManager rm, SpendingManager sm, HttpServletRequest req) throws Exception {
         String date = req.getParameter("date");
@@ -447,6 +506,27 @@ public class AccountBookServlet extends HttpServlet {
         Map<Integer, String> itemKindMap = null;
         
         if (req.getParameter("action").equals("show_rev_bar")) {
+            itemKindMap = rm.getRevenueKindMap();
+        } else {
+            itemKindMap = sm.getSpendingKindMap();
+        }
+        
+        req.setAttribute("date", date);
+        req.setAttribute("category", itemKindMap);
+    }
+    
+    private void createYearlyBarChart(User user, RevenueManager rm, SpendingManager sm, HttpServletRequest req) throws Exception {
+        String date = req.getParameter("date");
+
+        if (date == null) {
+            java.util.Date d = new java.util.Date();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
+            date = sdf.format(d);
+        }
+        
+        Map<Integer, String> itemKindMap = null;
+        
+        if (req.getParameter("action").equals("show_yearly_rev_bar")) {
             itemKindMap = rm.getRevenueKindMap();
         } else {
             itemKindMap = sm.getSpendingKindMap();
