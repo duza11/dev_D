@@ -15,6 +15,8 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.StandardChartTheme;
+import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
+import org.jfree.chart.plot.PiePlot;
 import org.jfree.data.general.DefaultPieDataset;
 
 public class PieChartServlet extends HttpServlet {
@@ -46,11 +48,11 @@ public class PieChartServlet extends HttpServlet {
 
             String action = request.getParameter("action");
             String date = request.getParameter("date");
-            
+
             if (action.equals("show_rev_pie")) {
-                pieChartItemList = getRevenuePieCharItem(user, rm, date);
+                pieChartItemList = rm.getPieChartItemList(user, date);
             } else if (action.equals("show_spe_pie")) {
-                pieChartItemList = getSpendingPieCharItem(user, sm, date);
+                pieChartItemList = sm.getPieChartItemList(user, date);
             }
 
             ChartFactory.setChartTheme(StandardChartTheme.createLegacyTheme());
@@ -59,15 +61,16 @@ public class PieChartServlet extends HttpServlet {
 
             // データセットに項目名と値のを順にセット
             for (PieChartItem pci : pieChartItemList) {
-                objDpd.setValue(pci.getKindId() + ":" + pci.getKindName(), pci.getPrice());
+                objDpd.setValue(pci.getKindName(), pci.getPrice());
             }
-            
+
             // 3次元円グラフを生成（第1引数からグラフタイトル、
             // データセット、判例を表示するか、ツールチップを
             // 表示するか、URLを動的に生成するかを指定）
-            JFreeChart objCht = ChartFactory.createPieChart3D(
-                    "", objDpd, true, false, false);
-
+            JFreeChart objCht = ChartFactory.createPieChart3D("", objDpd, true, false, false);
+            objCht.setBorderVisible(true);
+            PiePlot objPp = (PiePlot) objCht.getPlot();
+            objPp.setLabelGenerator(new StandardPieSectionLabelGenerator("{0} = {1}円({2})"));
             // バイナリ出力ストリームにJPEG形式で画像を出力
             // 600×400ピクセル）
             response.setContentType("image/jpeg");
@@ -116,12 +119,4 @@ public class PieChartServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
-    private List<PieChartItem> getRevenuePieCharItem(User user, RevenueManager rm, String date) throws Exception {
-        return rm.getPieChartItemList(user, date);
-    }
-
-    private List<PieChartItem> getSpendingPieCharItem(User user, SpendingManager sm, String date) throws Exception {
-        return sm.getPieChartItemList(user, date);
-    }
 }

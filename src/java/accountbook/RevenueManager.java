@@ -27,12 +27,14 @@ public class RevenueManager {
                 + "from users as u, revenue_block as rb, revenue_item as ri "
                 + "where u.user_id = rb.user_id and rb.block_id = ri.block_id "
                 + "and u.user_id = ? "
-                + "and (date_format(date, '%Y%m') = ?) group by rb.date;";
+                + "and (date_format(date, '%Y-%m') = ? or date_format(date, '%Y-%c') = ?) "
+                + "group by rb.date;";
 
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
         ps.setInt(1, user.getUser_id());
-        ps.setString(2, String.format("%d%02d", year, month));
+        ps.setString(2, String.format("%d-%d", year, month));
+        ps.setString(3, String.format("%d-%d", year, month));
         rs = ps.executeQuery();
 
         if (!rs.next()) {
@@ -122,14 +124,15 @@ public class RevenueManager {
                 + "from users as u, revenue_block as rb, revenue_item as ri, "
                 + "revenue_item_kind as rk where u.user_id = rb.user_id "
                 + "and rb.block_id = ri.block_id and ri.kind_id = rk.kind_id "
-                + "and u.user_id = ? and date_format(rb.date, '%Y-%m') = ? "
+                + "and u.user_id = ? and (date_format(rb.date, '%Y-%m') = ? or date_format(rb.date, '%Y-%c') = ?)"
                 + "and rk.kind_id = ? group by day(rb.date)";
 
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
         ps.setInt(1, user.getUser_id());
         ps.setString(2, date);
-        ps.setInt(3, kind);
+        ps.setString(3, date);
+        ps.setInt(4, kind);
         rs = ps.executeQuery();
 
         if (!rs.next()) {
@@ -180,13 +183,14 @@ public class RevenueManager {
                 + "from users u, revenue_block rb, revenue_item ri, revenue_item_kind rk "
                 + "where u.user_id = rb.user_id and rb.block_id = ri.block_id "
                 + "and ri.kind_id = rk.kind_id and u.user_id = ? "
-                + "and date_format(rb.date, '%Y-%m') = ? group by day, rk.kind_id "
-                + "order by day, kind_id asc;";
+                + "and (date_format(rb.date, '%Y-%m') = ? or date_format(rb.date, '%Y-%c') = ?) "
+                + "group by day, rk.kind_id order by day, kind_id asc;";
         
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
         ps.setInt(1, user.getUser_id());
         ps.setString(2, date);
+        ps.setString(3, date);
         rs = ps.executeQuery();
         
         if (!rs.next()) {
@@ -231,13 +235,14 @@ public class RevenueManager {
                 + "from users as u, revenue_block as rb, revenue_item as ri, "
                 + "revenue_item_kind as rk where u.user_id = rb.user_id "
                 + "and rb.block_id = ri.block_id and ri.kind_id = rk.kind_id "
-                + "and u.user_id = ? and date_format(rb.date, '%Y-%m') = ? "
-                + "group by rk.kind_id";
+                + "and u.user_id = ? and (date_format(rb.date, '%Y-%m') = ? "
+                + "or date_format(rb.date, '%Y-%c') = ?) group by rk.kind_id";
 
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
         ps.setInt(1, user.getUser_id());
         ps.setString(2, date);
+        ps.setString(3, date);
         rs = ps.executeQuery();
 
         if (!rs.next()) {

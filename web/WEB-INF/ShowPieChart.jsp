@@ -23,12 +23,13 @@
     <body>
         <%@include file="Header.jsp"%>
         <div class="container theme-showcase" role="main">
+            <h1><%=date%>の<%=request.getParameter("action").equals("show_rev_pie") ? "収入" : "支出"%></h1>
             <p>
-                <a href="?action=<%=request.getParameter("action")%>&date=<%=previousYear%>-<%=String.format("%02d", previousMonth)%>">先月</a>
-                <a href="?action=<%=request.getParameter("action")%>&date=<%=nextYear%>-<%=String.format("%02d", nextMonth)%>">翌月</a>
+                <a href="?action=<%=request.getParameter("action")%>&date=<%=previousYear%>-<%=previousMonth%>">先月</a>
+                <a href="?action=<%=request.getParameter("action")%>&date=<%=nextYear%>-<%=nextMonth%>">翌月</a>
             </p>
             ${requestScope['map']}
-            <img src="chart.jpg?action=<%=request.getParameter("action")%><% if (request.getParameter("date") != null) {%>&date=<%=request.getParameter("date")%><%}%>" usemap="#map" border="0" />
+            <img src="piechart.jpg?action=<%=request.getParameter("action")%><%=(request.getParameter("date") != null) ? "&date=" + request.getParameter("date") : ""%>" usemap="#map" border="0" />
         </div>
     </body>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>

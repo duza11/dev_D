@@ -24,12 +24,14 @@ public class SpendingManager {
                 + "from users as u, spending_block as sb, spending_item as si "
                 + "where u.user_id = sb.user_id and sb.block_id = si.block_id "
                 + "and u.user_id = ? "
-                + "and (date_format(date, '%Y%m') = ?) group by sb.date";
+                + "and (date_format(date, '%Y-%m') = ? or date_format(date, '%Y-%c') = ?) "
+                + "group by sb.date";
 
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
         ps.setInt(1, user.getUser_id());
-        ps.setString(2, String.format("%d%02d", year, month));
+        ps.setString(2, String.format("%d-%d", year, month));
+        ps.setString(3, String.format("%d-%d", year, month));
         rs = ps.executeQuery();
 
         if (!rs.next()) {
@@ -118,14 +120,15 @@ public class SpendingManager {
                 + "from users as u, spending_block as sb, spending_item as si, "
                 + "spending_item_kind as sk where u.user_id = sb.user_id "
                 + "and sb.block_id = si.block_id and si.kind_id = sk.kind_id "
-                + "and u.user_id = ? and date_format(sb.date, '%Y-%m') = ? "
+                + "and u.user_id = ? and (date_format(sb.date, '%Y-%m') = ? or date_format(sb.date, '%Y-%c') = ?)"
                 + "and sk.kind_id = ? group by day(sb.date)";
 
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
         ps.setInt(1, user.getUser_id());
         ps.setString(2, date);
-        ps.setInt(3, kind);
+        ps.setString(3, date);
+        ps.setInt(4, kind);
         rs = ps.executeQuery();
 
         if (!rs.next()) {
@@ -176,13 +179,14 @@ public class SpendingManager {
                 + "from users u, spending_block sb, spending_item si, spending_item_kind sk "
                 + "where u.user_id = sb.user_id and sb.block_id = si.block_id "
                 + "and si.kind_id = sk.kind_id and u.user_id = ? "
-                + "and date_format(sb.date, '%Y-%m') = ? group by day, sk.kind_id "
-                + "order by day, kind_id asc;";
+                + "and (date_format(sb.date, '%Y-%m') = ? or date_format(sb.date, '%Y-%c') = ?) "
+                + "group by day, sk.kind_id order by day, kind_id asc;";
         
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
         ps.setInt(1, user.getUser_id());
         ps.setString(2, date);
+        ps.setString(3, date);
         rs = ps.executeQuery();
         
         if (!rs.next()) {
@@ -227,13 +231,14 @@ public class SpendingManager {
                 + "from users as u, spending_block as sb, spending_item as si, "
                 + "spending_item_kind as sk where u.user_id = sb.user_id "
                 + "and sb.block_id = si.block_id and si.kind_id = sk.kind_id "
-                + "and u.user_id = ? and date_format(sb.date, '%Y-%m') = ? "
+                + "and u.user_id = ? and (date_format(sb.date, '%Y-%m') = ?  or date_format(sb.date, '%Y-%c') = ?)"
                 + "group by sk.kind_id";
 
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
         ps.setInt(1, user.getUser_id());
         ps.setString(2, date);
+        ps.setString(3, date);
         rs = ps.executeQuery();
 
         if (!rs.next()) {

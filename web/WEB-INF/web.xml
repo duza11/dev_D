@@ -5,7 +5,7 @@
         <servlet-class>AccountBookServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>ChartServlet</servlet-name>
+        <servlet-name>PieChartServlet</servlet-name>
         <servlet-class>PieChartServlet</servlet-class>
     </servlet>
     <servlet>
@@ -25,8 +25,8 @@
         <url-pattern>/AccountBookServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ChartServlet</servlet-name>
-        <url-pattern>/chart.jpg</url-pattern>
+        <servlet-name>PieChartServlet</servlet-name>
+        <url-pattern>/piechart.jpg</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>BarChartServlet</servlet-name>

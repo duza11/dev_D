@@ -435,7 +435,7 @@ public class AccountBookServlet extends HttpServlet {
         }
     }
 
-    private void createBarChart(User user, RevenueManager rm, SpendingManager sm, HttpServletRequest req) {
+    private void createBarChart(User user, RevenueManager rm, SpendingManager sm, HttpServletRequest req) throws Exception {
         String date = req.getParameter("date");
 
         if (date == null) {
@@ -444,7 +444,16 @@ public class AccountBookServlet extends HttpServlet {
             date = sdf.format(d);
         }
         
+        Map<Integer, String> itemKindMap = null;
+        
+        if (req.getParameter("action").equals("show_rev_bar")) {
+            itemKindMap = rm.getRevenueKindMap();
+        } else {
+            itemKindMap = sm.getSpendingKindMap();
+        }
+        
         req.setAttribute("date", date);
+        req.setAttribute("category", itemKindMap);
     }
 
     /**

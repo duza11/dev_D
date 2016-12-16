@@ -53,17 +53,9 @@ public class BarChartServlet extends HttpServlet {
             String date = request.getParameter("date");
 
             if (action.equals("show_rev_bar")) {
-                if (kind == 0) {
-                    barChartItemList = rm.getStackedBarChartItemList(user, kind, date);
-                } else {
-                    barChartItemList = getRevenueBarCharItem(user, rm, kind, date);
-                }
+                barChartItemList = (kind == 0)? rm.getStackedBarChartItemList(user, kind, date) : rm.getBarChartItemList(user, kind, date);
             } else if (action.equals("show_spe_bar")) {
-                if (kind == 0) {
-                    barChartItemList = sm.getStackedBarChartItemList(user, kind, date);
-                } else {
-                    barChartItemList = getSpendingBarCharItem(user, sm, kind, date);
-                }
+                barChartItemList = (kind == 0)? sm.getStackedBarChartItemList(user, kind, date) : sm.getBarChartItemList(user, kind, date);
             }
 
             DefaultCategoryDataset objDcd = new DefaultCategoryDataset();
@@ -72,8 +64,8 @@ public class BarChartServlet extends HttpServlet {
             }
 
             ChartFactory.setChartTheme(StandardChartTheme.createLegacyTheme());
-            JFreeChart objCht = ChartFactory.createStackedBarChart("", "日", "金額", objDcd, PlotOrientation.VERTICAL, true, false, false);
-
+            JFreeChart objCht = ChartFactory.createStackedBarChart("", "日", "円", objDcd, PlotOrientation.VERTICAL, true, false, false);
+            objCht.setBorderVisible(true);
             CategoryPlot cp = (CategoryPlot) objCht.getPlot();
             NumberAxis na = (NumberAxis) cp.getRangeAxis();
             na.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
@@ -126,12 +118,4 @@ public class BarChartServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
-    private List<BarChartItem> getRevenueBarCharItem(User user, RevenueManager rm, int kind, String date) throws Exception {
-        return rm.getBarChartItemList(user, kind, date);
-    }
-
-    private List<BarChartItem> getSpendingBarCharItem(User user, SpendingManager sm, int kind, String date) throws Exception {
-        return sm.getBarChartItemList(user, kind, date);
-    }
 }

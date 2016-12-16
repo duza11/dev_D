@@ -49,4 +49,10 @@ $(function () {
             });
         });
     });
+
+    $('#submit_select').change(function () {
+        if ($('#submit_form option:selected').val() != '-1') {
+            $('#submit_form').submit();
+        }
+    });
 });
