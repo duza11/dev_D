@@ -46,6 +46,7 @@ public class BarChartServlet extends HttpServlet {
             String dataLabel = "";
 
             if (user == null) {
+                request.setAttribute("message", "先にログインしてください");
                 response.sendRedirect("AccountBookServlet");
             }
 
@@ -65,6 +66,9 @@ public class BarChartServlet extends HttpServlet {
             } else if (action.equals("show_yearly_spe_bar")) {
                 barChartItemList = (kind == 0)? sm.getYearlyStackedBarChartItemList(user, kind, date) : sm.getYearlyBarChartItemList(user, kind, date);
                 dataLabel = "月";
+            } else {
+                request.setAttribute("message", "不正なパラメータが検出されました");
+                response.sendRedirect("AccountBookServlet");
             }
 
             DefaultCategoryDataset objDcd = new DefaultCategoryDataset();

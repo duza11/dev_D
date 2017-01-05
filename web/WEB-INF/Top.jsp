@@ -16,6 +16,10 @@
     <body>
         <%@include file="Header.jsp"%>
         <div class="container theme-showcase" role="main">
+            <% if (message != null) {%>
+            <font class="spending"><%= message%></font>
+            <br>
+            <% }%>
             <table>
                 <tr>
                     <td class="text-center"><a href="?action=show_calendar&year=<%=abc.getYear()%>&month=<%=abc.getMonth() - 1%>">前月</a></td>
