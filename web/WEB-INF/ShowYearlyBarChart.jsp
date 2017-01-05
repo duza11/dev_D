@@ -17,7 +17,7 @@
     <body>
         <%@include file="Header.jsp"%>
         <div class="container theme-showcase" role="main">
-            <h1><%=date%>の<%=request.getParameter("action").equals("show_rev_bar") ? "収入" : "支出"%></h1>
+            <h1><%=date%>年の<%=request.getParameter("action").equals("show_rev_bar") ? "収入" : "支出"%></h1>
             <p>
                 <a href="?action=<%=request.getParameter("action")%>&category=<%=request.getParameter("category")%>&date=<%=Integer.parseInt(date) - 1%>">前年</a>
                 <a href="?action=<%=request.getParameter("action")%>&category=<%=request.getParameter("category")%>&date=<%=Integer.parseInt(date) + 1%>">翌年</a>

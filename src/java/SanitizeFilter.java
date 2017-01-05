@@ -9,12 +9,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 public class SanitizeFilter implements Filter {
-
-    private static final boolean debug = true;
-
-    // The filter configuration object we are associated with.  If
-    // this value is null, this filter instance is not currently
-    // configured. 
     private FilterConfig filterConfig = null;
 
     public SanitizeFilter() {
@@ -23,7 +17,7 @@ public class SanitizeFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain)
             throws IOException, ServletException {
-
+        request.setCharacterEncoding("utf-8");
         try {
             ServletRequest sanitizedRequest = request;
             if (request instanceof HttpServletRequest

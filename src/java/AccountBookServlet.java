@@ -490,7 +490,7 @@ public class AccountBookServlet extends HttpServlet {
         req.setAttribute("map", ChartUtilities.getImageMap("map", objCri));
 //            this.getServletContext().getRequestDispatcher("/chart.jsp").forward(req, response);
         req.setAttribute("date", date);
-        return "SHOW_YEARLY_PIE_CHART;";
+        return SHOW_YEARLY_PIE_CHART;
     }
 
     private String createBarChart(User user, RevenueManager rm, SpendingManager sm, HttpServletRequest req) throws Exception {
