@@ -4,6 +4,14 @@
 <jsp:useBean id="message" class="java.lang.String" scope="request" />
 <jsp:useBean id="user" class="accountbook.User" scope="session" />
 <jsp:useBean id="abc" class="accountbook.AccountBookCalendar" scope="request" />
+
+<%
+    int previousMonth = (abc.getMonth() + 1 - 2 + 12) % 12 + 1;
+    int previousYear = abc.getYear() - previousMonth / 12;
+    int nextMonth = (abc.getMonth() + 1) % 12 + 1;
+    int nextYear = abc.getYear() + (abc.getMonth() + 1) / 12;
+%>
+
 <html lang="ja">
     <head>
         <meta charset="utf-8">
@@ -22,9 +30,9 @@
             <% }%>
             <table>
                 <tr>
-                    <td class="text-center"><a href="?action=show_calendar&year=<%=abc.getYear()%>&month=<%=abc.getMonth() - 1%>">前月</a></td>
+                    <td class="text-center"><a href="?action=show_calendar&year=<%=previousYear%>&month=<%=previousMonth%>">前月</a></td>
                     <td colspan="5" class="text-center"><%=abc.getYear()%>年<%=abc.getMonth() + 1%>月</td>
-                    <td class="text-center"><a href="?action=show_calendar&year=<%=abc.getYear()%>&month=<%=abc.getMonth() + 1%>">翌月</a></td>
+                    <td class="text-center"><a href="?action=show_calendar&year=<%=nextYear%>&month=<%=nextMonth%>">翌月</a></td>
                 </tr>
                 <tr><td class="week">日</td><td class="week">月</td><td class="week">火</td><td class="week">水</td><td class="week">木</td><td class="week">金</td><td class="week">土</td></tr>
                 <%

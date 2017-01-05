@@ -99,34 +99,35 @@ public class AccountBookServlet extends HttpServlet {
             /**
              * 以下のif文でユーザからの要求を判別し，適切処理を行う
              */
-            if (action.equals("") || action.equals("loginPage")) {
-                nextView = LOGIN_JSP; // ログイン用のページを表示
-            } else if (action.equals("login")) {
-                // 認証の処理を実行
-                if (login(um, req)) {
-                    user = (User) session.getAttribute("user");
-                    setDateArray(rm, sm, user, req);
-                    nextView = TOP_JSP;
+            if (user == null) {
+                if (action.equals("") || action.equals("loginPage")) {
+                    nextView = LOGIN_JSP; // ログイン用のページを表示
+                } else if (action.equals("login")) {
+                    // 認証の処理を実行
+                    if (login(um, req)) {
+                        user = (User) session.getAttribute("user");
+                        setDateArray(rm, sm, user, req);
+                        nextView = TOP_JSP;
 //                    nextView = showItems(im, req); // ログイン成功
-                } else {
-                    nextView = LOGIN_JSP; // ログイン失敗
-                }
+                    } else {
+                        nextView = LOGIN_JSP; // ログイン失敗
+                    }
 
+                } else if (action.equals("registration")) {
+                    // 新規ユーザの登録処理を実行
+                    nextView = registration(um, req);
+
+                } else {
+                    /*
+		     * カートオブジェクトが無い場合はログインしていないと判断し，
+		     * 強制的にログインページへ遷移
+                     */
+                    req.setAttribute("message", "先にログインしてください");
+                    nextView = LOGIN_JSP;
+                }
             } else if (action.equals("logout")) {
                 // ログアウトの処理を実行
                 nextView = logout(req);
-
-            } else if (action.equals("registration")) {
-                // 新規ユーザの登録処理を実行
-                nextView = registration(um, req);
-
-            } else if (user == null) {
-                /*
-		     * カートオブジェクトが無い場合はログインしていないと判断し，
-		     * 強制的にログインページへ遷移
-                 */
-                req.setAttribute("message", "先にログインしてください");
-                nextView = LOGIN_JSP;
 
             } else if (action.equals("show_calendar") || action.equals("")) {
                 setDateArray(rm, sm, user, req);
@@ -177,8 +178,9 @@ public class AccountBookServlet extends HttpServlet {
                 // actionパラメータの指定が無い，または不明な処理が要求された場合
                 req.setAttribute("message", "不正なアクションが要求されました("
                         + req.getParameter("action") + ")");
-
-                nextView = LOGIN_JSP;
+                
+                setDateArray(rm, sm, user, req);
+                nextView = TOP_JSP;
             }
 
             dc.closeConnection(); // データベースへの接続を切断
@@ -285,6 +287,9 @@ public class AccountBookServlet extends HttpServlet {
         String param = req.getParameter("year");
         if (!isValid(param)) {
             year = -999;
+        } else if (!param.matches("\\d+")) {
+            year = -999;
+            req.setAttribute("message", "不正なパラメータです");
         } else {
             try {
                 year = Integer.parseInt(param);
@@ -296,6 +301,9 @@ public class AccountBookServlet extends HttpServlet {
         param = req.getParameter("month");
         if (!isValid(param)) {
             month = -999;
+        } else if (!param.matches("(0?[1-9]|1[0-2])")) {
+            month = -999;
+            req.setAttribute("message", "不正なパラメータです");
         } else {
             try {
                 month = Integer.parseInt(param);
@@ -308,14 +316,7 @@ public class AccountBookServlet extends HttpServlet {
             year = calendar.get(Calendar.YEAR);
             month = calendar.get(Calendar.MONTH);
         } else {
-            if (month == 12) {
-                month = 0;
-                year++;
-            }
-            if (month == -1) {
-                month = 11;
-                year--;
-            }
+            month = (month + 11) % 12;
         }
 
         calendar.set(year, month, 1);
@@ -408,17 +409,17 @@ public class AccountBookServlet extends HttpServlet {
         List<PieChartItem> pieChartItemList = null;
 
         String date = req.getParameter("date");
-        
+
         if (date == null) {
             java.util.Date d = new java.util.Date();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
             date = sdf.format(d);
         }
-        
+
         if (!date.matches("\\d+-(0?[1-9]|1[0-2])")) {
             return LOGIN_JSP;
         }
-        
+
         if (req.getParameter("action").equals("show_rev_pie")) {
             pieChartItemList = rm.getPieChartItemList(user, date);
         } else if (req.getParameter("action").equals("show_spe_pie")) {
@@ -452,13 +453,13 @@ public class AccountBookServlet extends HttpServlet {
         List<PieChartItem> pieChartItemList = null;
 
         String date = req.getParameter("date");
-        
+
         if (date == null) {
             java.util.Date d = new java.util.Date();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
             date = sdf.format(d);
         }
-        
+
         if (!date.matches("\\d+")) {
             return LOGIN_JSP;
         }
@@ -500,7 +501,7 @@ public class AccountBookServlet extends HttpServlet {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
             date = sdf.format(d);
         }
-        
+
         if (!date.matches("\\d+-(0?[1-9]|1[0-2])")) {
             return LOGIN_JSP;
         }
@@ -526,7 +527,7 @@ public class AccountBookServlet extends HttpServlet {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
             date = sdf.format(d);
         }
-        
+
         if (!date.matches("\\d+")) {
             return LOGIN_JSP;
         }
