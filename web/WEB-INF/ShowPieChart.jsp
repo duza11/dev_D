@@ -23,13 +23,19 @@
     <body>
         <%@include file="Header.jsp"%>
         <div class="container theme-showcase" role="main">
-            <h1><%=dateArray[0]%>年<%=dateArray[1]%>月の<%=request.getParameter("action").equals("show_rev_pie") ? "収入" : "支出"%></h1>
-            <p>
-                <a href="?action=<%=request.getParameter("action")%>&date=<%=previousYear%>-<%=previousMonth%>">先月</a>
-                <a href="?action=<%=request.getParameter("action")%>&date=<%=nextYear%>-<%=nextMonth%>">翌月</a>
-            </p>
-            ${requestScope['map']}
-            <img src="piechart.jpg?action=<%=request.getParameter("action")%><%=(request.getParameter("date") != null) ? "&date=" + request.getParameter("date") : ""%>" usemap="#map" border="0" />
+            <div class="row">
+                <h1><%=dateArray[0]%>年<%=dateArray[1]%>月の<%=request.getParameter("action").equals("show_rev_pie") ? "収入" : "支出"%></h1>
+            </div>
+            <div class="row">
+                <a class="btn btn-primary" href="?action=<%=request.getParameter("action")%>&date=<%=previousYear%>-<%=previousMonth%>">先月</a>
+                <a class="btn btn-primary" href="?action=<%=request.getParameter("action")%>&date=<%=nextYear%>-<%=nextMonth%>">翌月</a>
+            </div>
+            <div class="row">
+                <h1>
+                    ${requestScope['map']}
+                    <img src="piechart.jpg?action=<%=request.getParameter("action")%><%=(request.getParameter("date") != null) ? "&date=" + request.getParameter("date") : ""%>" usemap="#map" border="0" />
+                </h1>
+            </div>
         </div>
     </body>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>

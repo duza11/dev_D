@@ -12,16 +12,22 @@
     <body>
         <%@include file="Header.jsp"%>
         <div class="container theme-showcase" role="main">
-            <h1><%=date%>年の<%=request.getParameter("action").equals("show_rev_pie") ? "収入" : "支出"%></h1>
-            <p>
-                <a href="?action=<%=request.getParameter("action")%>&date=<%=Integer.parseInt(date) - 1%>">前年</a>
-                <a href="?action=<%=request.getParameter("action")%>&date=<%=Integer.parseInt(date) + 1%>">翌年</a>
-            </p>
-            ${requestScope['map']}
-            <img src="piechart.jpg?action=<%=request.getParameter("action")%><%=(request.getParameter("date") != null) ? "&date=" + request.getParameter("date") : ""%>" usemap="#map" border="0" />
+            <div class="row">
+                <h1><%=date%>年の<%=request.getParameter("action").equals("show_rev_pie") ? "収入" : "支出"%></h1>
+            </div>
+            <div class="row">
+                <a class="btn btn-primary" href="?action=<%=request.getParameter("action")%>&date=<%=Integer.parseInt(date) - 1%>">前年</a>
+                <a class="btn btn-primary" href="?action=<%=request.getParameter("action")%>&date=<%=Integer.parseInt(date) + 1%>">翌年</a>
+            </div>
+            <div>
+                <h1>
+                    ${requestScope['map']}
+                    <img src="piechart.jpg?action=<%=request.getParameter("action")%><%=(request.getParameter("date") != null) ? "&date=" + request.getParameter("date") : ""%>" usemap="#map" border="0" />
+                </h1>
+            </div>
         </div>
     </body>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    </body>
+</body>
 </html>
