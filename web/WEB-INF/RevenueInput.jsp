@@ -17,54 +17,66 @@
         <%@include file="Header.jsp"%>
         <div class="container theme-showcase" role="main">
             <h1>収入額の入力画面</h1>
-            <form action="?action=register_rev" method="post">
 
-                <table>
-                    <tr>
-                        <td colspan="5">日付</td>
-                    </tr>
-                    <tr>
-                        <td colspan="5"><input type="date" name="date" required></td>
-                    </tr>
-                    <tr>
-                        <td colspan="5">店名</td>
-                    </tr>
-                    <tr>
-                        <td colspan="5"><input type="text" name="place"></td>
-                    </tr>
-                    <tr>
-                        <td>ジャンル</td>
-                        <td>名前</td>
-                        <td>金額</td>
-                        <td>数</td>
-                    </tr>
-                    <tr class="form-block" id="form_block[0]">
-                        <td>
-                            <select name="kind[0]" id="kind[0]" required>
-                                <%
-                                    for (Map.Entry<Integer, String> e : kind.entrySet()) {
-                                %>
-                                <option value="<%=e.getKey()%>"><%=e.getValue()%></option>
-                                <%
-                                    }
-                                %>
-                            </select>
-                        </td>
-                        <td><input type="text" name="item_name[0]" id="item_name[0]"></td>
-                        <td><input type="number" name="price[0]" id="price[0]" min="0" required></td>
-                        <td><input type="number" name="count[0]" id="count[0]" min="1" required></td>
-                        <td><div class="close" title="Close" style="display: none;"><button type="button">-</button></div></td>
-                    </tr>
-                </table>
-                <div class="form-block" id="form_add">
-                    <p>
-                        <button class="add" type="button">+</button>
-                    </p>
+            <form class="form-vertical" action="?action=register_rev" method="post">
+                <div class="form-group">
+                    <div class="row">
+                        <label class="col-md-3 control-label">日付</label>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <input class="form-control" type="date" name="date" required>
+                        </div>
+                    </div>
                 </div>
-                <p>
-                    <input type="submit" value="送信">
-                    <input type="reset" value="リセット">
-                </p>
+                <div class="form-group">
+                    <div class="row">
+                        <label class="col-md-3 control-label">店名</label>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <input class="form-control" type="text" name="place" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <label class="col-md-2 control-label">種類</label>
+                        <label class="col-md-2 control-label">名前</label>
+                        <label class="col-md-2 control-label">金額</label>
+                        <label class="col-md-2 control-label">数</label>
+                    </div>
+                    <div class="form-block" id="form_block[0]">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <select class="form-control" name="kind[0]" id="kind[0]" required>
+                                    <%
+                                        for (Map.Entry<Integer, String> e : kind.entrySet()) {
+                                    %>
+                                    <option value="<%=e.getKey()%>"><%=e.getValue()%></option>
+                                    <%
+                                        }
+                                    %>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <input class="form-control" type="text" name="item_name[0]" id="item_name[0]" required>
+                            </div>
+                            <div class="col-md-2">
+                                <input class="form-control" type="number" name="price[0]" id="price[0]" required>
+                            </div>
+                            <div class="col-md-2">
+                                <input class="form-control" type="number" name="count[0]" id="count[0]" required>
+                            </div>
+                            <div class="clone-close col-md-1">
+                                <div class="close" title="Close" style="display: none;"><button type="button" class="btn btn-secondary">-</button></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" type="submit">送信</button>
+                <button class="btn btn-secondary" type="reset">リセット</button>
+                <button class="add btn btn-secondary" type="button">+</button>
             </form>
         </div>
     </body>

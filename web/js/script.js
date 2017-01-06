@@ -24,12 +24,12 @@ $(function () {
 
         // clone取得
         var clone = $('#form_block\\[' + frm_cnt + '\\]');
-        clone.find('td').children('div.close').show();
+        clone.find('.clone-close').children('div.close').show();
         clone.slideDown('slow');
     });
 
     $(document).on('click', '.close', function () {
-        var removeObj = $(this).parent().parent();
+        var removeObj = $(this).parent().parent().parent();
         removeObj.slideUp('fast', function () {
             removeObj.remove();
             // 番号振り直し
