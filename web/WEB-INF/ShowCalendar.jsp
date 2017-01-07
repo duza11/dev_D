@@ -86,12 +86,12 @@
                         <%
                             if (abc.getDayList().get(j).getRevenue() != -1) {
                         %>
-                        <div class="ft-red"><%=abc.getDayList().get(j).getRevenue()%></div>
+                        <div class="ft-green"><%=abc.getDayList().get(j).getRevenue()%></div>
                         <%
                             }
                             if (abc.getDayList().get(j).getSpending() != -1) {
                         %>
-                        <div class="ft-green"><%=abc.getDayList().get(j).getSpending()%></div>
+                        <div class="ft-red"><%=abc.getDayList().get(j).getSpending()%></div>
                         <%
                             }
                         %>
