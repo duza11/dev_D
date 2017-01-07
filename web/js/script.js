@@ -24,11 +24,11 @@ $(function () {
 
         // clone取得
         var clone = $('#form_block\\[' + frm_cnt + '\\]');
-        clone.find('.clone-close').children('div.close').show();
+        clone.find('.clone-close').children('div.close-btn').show();
         clone.slideDown('slow');
     });
 
-    $(document).on('click', '.close', function () {
+    $(document).on('click', '.close-btn', function () {
         var removeObj = $(this).parent().parent().parent();
         removeObj.slideUp('fast', function () {
             removeObj.remove();
@@ -55,4 +55,6 @@ $(function () {
             $('#submit_form').submit();
         }
     });
+
+    $('.alert').fadeIn(1000).delay(500).fadeOut(2000);
 });

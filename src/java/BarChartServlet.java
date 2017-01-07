@@ -4,6 +4,7 @@ import accountbook.DatabaseConnector;
 import accountbook.RevenueManager;
 import accountbook.SpendingManager;
 import accountbook.User;
+import java.awt.Color;
 import java.io.IOException;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -54,10 +55,10 @@ public class BarChartServlet extends HttpServlet {
             int kind = Integer.parseInt(request.getParameter("category"));
             String date = request.getParameter("date");
 
-            if (action.equals("show_rev_bar")) {
+            if (action.equals("show_monthly_rev_bar")) {
                 barChartItemList = (kind == 0)? rm.getStackedBarChartItemList(user, kind, date) : rm.getBarChartItemList(user, kind, date);
                 dataLabel = "日";
-            } else if (action.equals("show_spe_bar")) {
+            } else if (action.equals("show_monthly_spe_bar")) {
                 barChartItemList = (kind == 0)? sm.getStackedBarChartItemList(user, kind, date) : sm.getBarChartItemList(user, kind, date);
                 dataLabel = "日";
             } else if (action.equals("show_yearly_rev_bar")) {
@@ -79,6 +80,7 @@ public class BarChartServlet extends HttpServlet {
             ChartFactory.setChartTheme(StandardChartTheme.createLegacyTheme());
             JFreeChart objCht = ChartFactory.createStackedBarChart("", dataLabel, "円", objDcd, PlotOrientation.VERTICAL, true, false, false);
             objCht.setBorderVisible(true);
+            objCht.setBackgroundPaint(Color.WHITE);
             CategoryPlot cp = (CategoryPlot) objCht.getPlot();
             NumberAxis na = (NumberAxis) cp.getRangeAxis();
             na.setStandardTickUnits(NumberAxis.createIntegerTickUnits());

@@ -32,7 +32,7 @@ public class RevenueManager {
 
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
-        ps.setInt(1, user.getUser_id());
+        ps.setInt(1, user.getUserId());
         ps.setString(2, String.format("%d-%d", year, month));
         ps.setString(3, String.format("%d-%d", year, month));
         rs = ps.executeQuery();
@@ -74,7 +74,7 @@ public class RevenueManager {
         sql = "insert into revenue_block values(null, ?, ?, ?)";
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
-        ps.setInt(1, user.getUser_id());
+        ps.setInt(1, user.getUserId());
         ps.setDate(2, new Date(rb.getDate().getTime()));
         ps.setString(3, rb.getPlace());
         ps.executeUpdate();
@@ -96,14 +96,14 @@ public class RevenueManager {
 
     public List<BarChartItem> getBarChartItemList(User user, int kind, String date) throws Exception {
         List<BarChartItem> barChartItemList = new ArrayList<BarChartItem>();
-        
+
         if (date == null) {
             java.util.Date d = new java.util.Date();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
             date = sdf.format(d);
         }
         String dateArray[] = date.split("-");
-        
+
         Calendar c = Calendar.getInstance();
         c.set(Integer.parseInt(dateArray[0]), Integer.parseInt(dateArray[1]) - 1, 1);
         int maxDate = c.getActualMaximum(Calendar.DATE);
@@ -129,7 +129,7 @@ public class RevenueManager {
 
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
-        ps.setInt(1, user.getUser_id());
+        ps.setInt(1, user.getUserId());
         ps.setString(2, date);
         ps.setString(3, date);
         ps.setInt(4, kind);
@@ -151,26 +151,26 @@ public class RevenueManager {
         rs.close();
         return barChartItemList;
     }
-    
+
     public List<BarChartItem> getStackedBarChartItemList(User user, int kind, String date) throws Exception {
         List<BarChartItem> barChartItemList = new ArrayList<BarChartItem>();
-        
+
         if (date == null) {
             java.util.Date d = new java.util.Date();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
             date = sdf.format(d);
         }
         String dateArray[] = date.split("-");
-        
+
         Calendar c = Calendar.getInstance();
         c.set(Integer.parseInt(dateArray[0]), Integer.parseInt(dateArray[1]) - 1, 1);
         int maxDate = c.getActualMaximum(Calendar.DATE);
-        
+
         String sql = "select kind_id, kind_name from revenue_item_kind order by kind_id asc";
-        
+
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
-        
+
         for (int i = 1; i <= maxDate; i++) {
             rs = ps.executeQuery();
             while (rs.next()) {
@@ -178,21 +178,21 @@ public class RevenueManager {
                 barChartItemList.add(bci);
             }
         }
-        
+
         sql = "select rk.kind_id, rk.kind_name, day(rb.date) day, sum(ri.price * ri.count) sum "
                 + "from users u, revenue_block rb, revenue_item ri, revenue_item_kind rk "
                 + "where u.user_id = rb.user_id and rb.block_id = ri.block_id "
                 + "and ri.kind_id = rk.kind_id and u.user_id = ? "
                 + "and (date_format(rb.date, '%Y-%m') = ? or date_format(rb.date, '%Y-%c') = ?) "
                 + "group by day, rk.kind_id order by day, kind_id asc;";
-        
+
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
-        ps.setInt(1, user.getUser_id());
+        ps.setInt(1, user.getUserId());
         ps.setString(2, date);
         ps.setString(3, date);
         rs = ps.executeQuery();
-        
+
         if (!rs.next()) {
             rs.close();
             return barChartItemList;
@@ -206,21 +206,21 @@ public class RevenueManager {
                 }
             }
         }
-        
+
         rs.close();
-        
+
         return barChartItemList;
     }
-    
+
     public List<BarChartItem> getYearlyBarChartItemList(User user, int kind, String date) throws Exception {
         List<BarChartItem> barChartItemList = new ArrayList<BarChartItem>();
-        
+
         if (date == null) {
             java.util.Date d = new java.util.Date();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
             date = sdf.format(d);
         }
-        
+
         String sql = "select kind_name from revenue_item_kind where kind_id = ?";
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
@@ -243,7 +243,7 @@ public class RevenueManager {
 
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
-        ps.setInt(1, user.getUser_id());
+        ps.setInt(1, user.getUserId());
         ps.setString(2, date);
         ps.setInt(3, kind);
         rs = ps.executeQuery();
@@ -264,21 +264,21 @@ public class RevenueManager {
         rs.close();
         return barChartItemList;
     }
-    
+
     public List<BarChartItem> getYearlyStackedBarChartItemList(User user, int kind, String date) throws Exception {
         List<BarChartItem> barChartItemList = new ArrayList<BarChartItem>();
-        
+
         if (date == null) {
             java.util.Date d = new java.util.Date();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
             date = sdf.format(d);
         }
-        
+
         String sql = "select kind_id, kind_name from revenue_item_kind order by kind_id asc";
-        
+
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
-        
+
         for (int i = 1; i < 13; i++) {
             rs = ps.executeQuery();
             while (rs.next()) {
@@ -286,19 +286,19 @@ public class RevenueManager {
                 barChartItemList.add(bci);
             }
         }
-        
+
         sql = "select rk.kind_id, rk.kind_name, month(rb.date) month, sum(ri.price * ri.count) sum "
                 + "from users u, revenue_block rb, revenue_item ri, revenue_item_kind rk "
                 + "where u.user_id = rb.user_id and rb.block_id = ri.block_id "
                 + "and ri.kind_id = rk.kind_id and u.user_id = ? "
                 + "and date_format(rb.date, '%Y') = ? group by month, rk.kind_id order by month, kind_id asc";
-        
+
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
-        ps.setInt(1, user.getUser_id());
+        ps.setInt(1, user.getUserId());
         ps.setString(2, date);
         rs = ps.executeQuery();
-        
+
         if (!rs.next()) {
             rs.close();
             return barChartItemList;
@@ -312,9 +312,9 @@ public class RevenueManager {
                 }
             }
         }
-        
+
         rs.close();
-        
+
         return barChartItemList;
     }
 
@@ -346,7 +346,7 @@ public class RevenueManager {
 
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
-        ps.setInt(1, user.getUser_id());
+        ps.setInt(1, user.getUserId());
         ps.setString(2, date);
         ps.setString(3, date);
         rs = ps.executeQuery();
@@ -368,7 +368,7 @@ public class RevenueManager {
 
         return pieChartItemList;
     }
-    
+
     public List<PieChartItem> getYearlyPieChartItemList(User user, String date) throws Exception {
         List<PieChartItem> pieChartItemList = new ArrayList<PieChartItem>();
         String sql = "select kind_id, kind_name from revenue_item_kind order by kind_id asc";
@@ -397,7 +397,7 @@ public class RevenueManager {
 
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
-        ps.setInt(1, user.getUser_id());
+        ps.setInt(1, user.getUserId());
         ps.setString(2, date);
         rs = ps.executeQuery();
 
@@ -417,5 +417,49 @@ public class RevenueManager {
         rs.close();
 
         return pieChartItemList;
+    }
+
+    public List<RevenueBlock> setDailyDataSet(User user, String date) throws Exception {
+        List<RevenueBlock> revenueBlockList = new ArrayList<RevenueBlock>();
+        String sql = "select ri.item_name, rk.kind_name, ri.price, ri.count, "
+                + "ri.kind_id, rb.block_id, rb.place, rb.date from users as u, "
+                + "revenue_block as rb, revenue_item as ri, revenue_item_kind as rk "
+                + "where u.user_id = rb.user_id and rb.block_id = ri.block_id "
+                + "and ri.kind_id = rk.kind_id and u.user_id = ? and rb.date = ?";
+        dc.openConnection(sql);
+        ps = dc.getPreparedStatement();
+        ps.setInt(1, user.getUserId());
+        ps.setDate(2, new Date(new SimpleDateFormat("yyyy-MM-dd").parse(date).getTime()));
+        rs = ps.executeQuery();
+
+        if (!rs.next()) {
+            return revenueBlockList;
+        }
+
+        int counter = 0;
+        while (true) {
+            RevenueBlock rb = new RevenueBlock();
+            rb.setDate(rs.getString("date"));
+            rb.setPlace(rs.getString("place"));
+            List<RevenueItem> rIList = new ArrayList<>();
+            while (counter == rs.getInt("block_id")) {
+                RevenueItem ri = new RevenueItem();
+                ri.setItemName(rs.getString("item_name"));
+                ri.setKindName(rs.getString("kind_name"));
+                ri.setPrice(rs.getInt("price"));
+                ri.setCount(rs.getInt("count"));
+                rIList.add(ri);
+                if (!rs.next()) {
+                    rb.setRevenueItemList(rIList);
+                    revenueBlockList.add(rb);
+                    return revenueBlockList;
+                }
+            }
+            counter = rs.getInt("block_id");
+            if (!rIList.isEmpty()) {
+                rb.setRevenueItemList(rIList);
+                revenueBlockList.add(rb);
+            }
+        }
     }
 }

@@ -1,5 +1,6 @@
 <%@page import="java.util.Map"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page trimDirectiveWhitespaces="true"%>
 <!DOCTYPE html>
 <jsp:useBean id="user" class="accountbook.User" scope="session" />
 <jsp:useBean id="date" class="java.lang.String" scope="request" />
@@ -17,43 +18,54 @@
 <html lang="ja">
     <head>
         <meta charset="utf-8">
-        <script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
-        <script src="js/script.js"></script>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
         <title>棒グラフ</title>
-        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
-        <link href="css/theme.css" rel="stylesheet">
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" rel="stylesheet">
+        <link href="css/style.css" rel="stylesheet">
     </head>
     <body>
         <%@include file="Header.jsp"%>
         <div class="container theme-showcase" role="main">
-            <h1><%=dateArray[0]%>年<%=dateArray[1]%>月の<%=request.getParameter("action").equals("show_rev_bar") ? "収入" : "支出"%></h1>
-            <div class="row">
-                <div class="col-md-2">
-                    <form id="submit_form" action="?action=<%=request.getParameter("action")%><% if (request.getParameter("date") != null) {%>&date=<%=request.getParameter("date")%><%}%>" method="post">
-                        <div class="form-group">
-                            <select class="form-control" id="submit_select" name="category" required>
-                                <option value="0" <%=(request.getParameter("category").equals("0")) ? "selected" : ""%>>全て</option>
-                                <%
-                                    for (Map.Entry<Integer, String> e : category.entrySet()) {
-                                %>
-                                <option value="<%=e.getKey()%>" <%=(Integer.parseInt(request.getParameter("category")) == e.getKey()) ? "selected" : ""%>><%=e.getValue()%></option>
-                                <%
-                                    }
-                                %>
-                            </select>
+            <div class="well">
+                <h1><%=dateArray[0]%>年<%=dateArray[1]%>月の<%=request.getParameter("action").equals("show_monthly_rev_bar") ? "収入" : "支出"%></h1>
+                <div class="row">
+                    <div class="col-md-2">
+                        <form id="submit_form" action="?action=<%=request.getParameter("action")%><% if (request.getParameter("date") != null) {%>&date=<%=request.getParameter("date")%><%}%>" method="post">
+                            <div class="form-group">
+                                <select class="form-control" id="submit_select" name="category" required>
+                                    <option value="0" <%=(request.getParameter("category").equals("0")) ? "selected" : ""%>>全て</option>
+                                    <%
+                                        for (Map.Entry<Integer, String> e : category.entrySet()) {
+                                    %>
+                                    <option value="<%=e.getKey()%>" <%=(Integer.parseInt(request.getParameter("category")) == e.getKey()) ? "selected" : ""%>><%=e.getValue()%></option>
+                                    <%
+                                        }
+                                    %>
+                                </select>
 
-                        </div>
-                    </form>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-2">
+                        <p>
+                            <a class="btn btn-primary" href="?action=<%=request.getParameter("action")%>&category=<%=request.getParameter("category")%>&date=<%=previousYear%>-<%=previousMonth%>">前月</a>
+                            <a class="btn btn-primary" href="?action=<%=request.getParameter("action")%>&category=<%=request.getParameter("category")%>&date=<%=nextYear%>-<%=nextMonth%>">翌月</a>
+                        </p>
+                    </div>
                 </div>
-                <div class="col-md-2">
-                    <a class="btn btn-primary" href="?action=<%=request.getParameter("action")%>&category=<%=request.getParameter("category")%>&date=<%=previousYear%>-<%=previousMonth%>">先月</a>
-                    <a class="btn btn-primary" href="?action=<%=request.getParameter("action")%>&category=<%=request.getParameter("category")%>&date=<%=nextYear%>-<%=nextMonth%>">翌月</a>
-                </div>
+                <p>
+                    <img class="img-responsive" src="barchart.jpg?action=<%=request.getParameter("action")%>&category=<%=request.getParameter("category")%><%=(request.getParameter("date") != null) ? "&date=" + request.getParameter("date") : ""%>" />
+                </p>
             </div>
-            <h1><img src="barchart.jpg?action=<%=request.getParameter("action")%>&category=<%=request.getParameter("category")%><%=(request.getParameter("date") != null) ? "&date=" + request.getParameter("date") : ""%>" /></h1>
         </div>
+        <script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
+        <script src="js/script.js"></script>
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <!-- Include all compiled plugins (below), or include individual files as needed -->
+        <script src="js/bootstrap.min.js"></script>
     </body>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </html>

@@ -29,7 +29,7 @@ public class SpendingManager {
 
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
-        ps.setInt(1, user.getUser_id());
+        ps.setInt(1, user.getUserId());
         ps.setString(2, String.format("%d-%d", year, month));
         ps.setString(3, String.format("%d-%d", year, month));
         rs = ps.executeQuery();
@@ -70,7 +70,7 @@ public class SpendingManager {
         sql = "insert into spending_block values(null, ?, ?, ?)";
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
-        ps.setInt(1, user.getUser_id());
+        ps.setInt(1, user.getUserId());
         ps.setDate(2, new Date(sb.getDate().getTime()));
         ps.setString(3, sb.getPlace());
         ps.executeUpdate();
@@ -92,14 +92,14 @@ public class SpendingManager {
 
     public List<BarChartItem> getBarChartItemList(User user, int kind, String date) throws Exception {
         List<BarChartItem> barChartItemList = new ArrayList<BarChartItem>();
-        
+
         if (date == null) {
             java.util.Date d = new java.util.Date();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
             date = sdf.format(d);
         }
         String dateArray[] = date.split("-");
-        
+
         Calendar c = Calendar.getInstance();
         c.set(Integer.parseInt(dateArray[0]), Integer.parseInt(dateArray[1]) - 1, 1);
         int maxDate = c.getActualMaximum(Calendar.DATE);
@@ -125,7 +125,7 @@ public class SpendingManager {
 
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
-        ps.setInt(1, user.getUser_id());
+        ps.setInt(1, user.getUserId());
         ps.setString(2, date);
         ps.setString(3, date);
         ps.setInt(4, kind);
@@ -147,16 +147,16 @@ public class SpendingManager {
         rs.close();
         return barChartItemList;
     }
-    
+
     public List<BarChartItem> getYearlyBarChartItemList(User user, int kind, String date) throws Exception {
         List<BarChartItem> barChartItemList = new ArrayList<BarChartItem>();
-        
+
         if (date == null) {
             java.util.Date d = new java.util.Date();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
             date = sdf.format(d);
         }
-        
+
         String sql = "select kind_name from spending_item_kind where kind_id = ?";
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
@@ -179,7 +179,7 @@ public class SpendingManager {
 
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
-        ps.setInt(1, user.getUser_id());
+        ps.setInt(1, user.getUserId());
         ps.setString(2, date);
         ps.setInt(3, kind);
         rs = ps.executeQuery();
@@ -200,21 +200,21 @@ public class SpendingManager {
         rs.close();
         return barChartItemList;
     }
-    
+
     public List<BarChartItem> getYearlyStackedBarChartItemList(User user, int kind, String date) throws Exception {
         List<BarChartItem> barChartItemList = new ArrayList<BarChartItem>();
-        
+
         if (date == null) {
             java.util.Date d = new java.util.Date();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
             date = sdf.format(d);
         }
-        
+
         String sql = "select kind_id, kind_name from spending_item_kind order by kind_id asc";
-        
+
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
-        
+
         for (int i = 1; i < 13; i++) {
             rs = ps.executeQuery();
             while (rs.next()) {
@@ -222,19 +222,19 @@ public class SpendingManager {
                 barChartItemList.add(bci);
             }
         }
-        
+
         sql = "select sk.kind_id, sk.kind_name, month(sb.date) month, sum(si.price * si.count) sum "
                 + "from users u, spending_block sb, spending_item si, spending_item_kind sk "
                 + "where u.user_id = sb.user_id and sb.block_id = si.block_id "
                 + "and si.kind_id = sk.kind_id and u.user_id = ? "
                 + "and date_format(sb.date, '%Y') = ? group by month, sk.kind_id order by month, kind_id asc";
-        
+
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
-        ps.setInt(1, user.getUser_id());
+        ps.setInt(1, user.getUserId());
         ps.setString(2, date);
         rs = ps.executeQuery();
-        
+
         if (!rs.next()) {
             rs.close();
             return barChartItemList;
@@ -248,31 +248,31 @@ public class SpendingManager {
                 }
             }
         }
-        
+
         rs.close();
-        
+
         return barChartItemList;
     }
-    
+
     public List<BarChartItem> getStackedBarChartItemList(User user, int kind, String date) throws Exception {
         List<BarChartItem> barChartItemList = new ArrayList<BarChartItem>();
-        
+
         if (date == null) {
             java.util.Date d = new java.util.Date();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
             date = sdf.format(d);
         }
         String dateArray[] = date.split("-");
-        
+
         Calendar c = Calendar.getInstance();
         c.set(Integer.parseInt(dateArray[0]), Integer.parseInt(dateArray[1]) - 1, 1);
         int maxDate = c.getActualMaximum(Calendar.DATE);
-        
+
         String sql = "select kind_id, kind_name from spending_item_kind order by kind_id asc";
-        
+
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
-        
+
         for (int i = 1; i <= maxDate; i++) {
             rs = ps.executeQuery();
             while (rs.next()) {
@@ -280,21 +280,21 @@ public class SpendingManager {
                 barChartItemList.add(bci);
             }
         }
-        
+
         sql = "select sk.kind_id, sk.kind_name, day(sb.date) day, sum(si.price * si.count) sum "
                 + "from users u, spending_block sb, spending_item si, spending_item_kind sk "
                 + "where u.user_id = sb.user_id and sb.block_id = si.block_id "
                 + "and si.kind_id = sk.kind_id and u.user_id = ? "
                 + "and (date_format(sb.date, '%Y-%m') = ? or date_format(sb.date, '%Y-%c') = ?) "
                 + "group by day, sk.kind_id order by day, kind_id asc;";
-        
+
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
-        ps.setInt(1, user.getUser_id());
+        ps.setInt(1, user.getUserId());
         ps.setString(2, date);
         ps.setString(3, date);
         rs = ps.executeQuery();
-        
+
         if (!rs.next()) {
             rs.close();
             return barChartItemList;
@@ -308,12 +308,12 @@ public class SpendingManager {
                 }
             }
         }
-        
+
         rs.close();
-        
+
         return barChartItemList;
     }
-    
+
     public List<PieChartItem> getPieChartItemList(User user, String date) throws Exception {
         List<PieChartItem> pieChartItemList = new ArrayList<PieChartItem>();
         String sql = "select kind_id, kind_name from spending_item_kind order by kind_id asc";
@@ -342,7 +342,7 @@ public class SpendingManager {
 
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
-        ps.setInt(1, user.getUser_id());
+        ps.setInt(1, user.getUserId());
         ps.setString(2, date);
         ps.setString(3, date);
         rs = ps.executeQuery();
@@ -393,7 +393,7 @@ public class SpendingManager {
 
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
-        ps.setInt(1, user.getUser_id());
+        ps.setInt(1, user.getUserId());
         ps.setString(2, date);
         rs = ps.executeQuery();
 
@@ -413,5 +413,49 @@ public class SpendingManager {
         rs.close();
 
         return pieChartItemList;
+    }
+
+    public List<SpendingBlock> setDailyDataSet(User user, String date) throws Exception {
+        List<SpendingBlock> spendingBlockList = new ArrayList<SpendingBlock>();
+        String sql = "select si.item_name, sk.kind_name, si.price, si.count, "
+                + "si.kind_id, sb.block_id, sb.place, sb.date from users as u, "
+                + "spending_block as sb, spending_item as si, spending_item_kind as sk "
+                + "where u.user_id = sb.user_id and sb.block_id = si.block_id "
+                + "and si.kind_id = sk.kind_id and u.user_id = ? and sb.date = ?";
+        dc.openConnection(sql);
+        ps = dc.getPreparedStatement();
+        ps.setInt(1, user.getUserId());
+        ps.setDate(2, new Date(new SimpleDateFormat("yyyy-MM-dd").parse(date).getTime()));
+        rs = ps.executeQuery();
+
+        if (!rs.next()) {
+            return spendingBlockList;
+        }
+
+        int counter = 0;
+        while (true) {
+            SpendingBlock sb = new SpendingBlock();
+            sb.setDate(rs.getString("date"));
+            sb.setPlace(rs.getString("place"));
+            List<SpendingItem> sIList = new ArrayList<>();
+            while (counter == rs.getInt("block_id")) {
+                SpendingItem si = new SpendingItem();
+                si.setItemName(rs.getString("item_name"));
+                si.setKindName(rs.getString("kind_name"));
+                si.setPrice(rs.getInt("price"));
+                si.setCount(rs.getInt("count"));
+                sIList.add(si);
+                if (!rs.next()) {
+                    sb.setSpendingItemList(sIList);
+                    spendingBlockList.add(sb);
+                    return spendingBlockList;
+                }
+            }
+            counter = rs.getInt("block_id");
+            if (!sIList.isEmpty()) {
+                sb.setSpendingItemList(sIList);
+                spendingBlockList.add(sb);
+            }
+        }
     }
 }

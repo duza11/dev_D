@@ -64,8 +64,8 @@ public class UserManager {
         return true;
     }
 
-    public void withdraw(String userName) throws Exception {
-        String sql = "delete from users where username='" + userName + "'";
+    public void withdraw(int userId) throws Exception {
+        String sql = "delete from users where user_id='" + userId + "'";
         st.executeUpdate(sql);
     }
     
@@ -75,7 +75,7 @@ public class UserManager {
         
         if(rs.next()) {
             User user = new User();
-            user.setUser_id(rs.getInt("user_id"));
+            user.setUserId(rs.getInt("user_id"));
             user.setUsername(rs.getString("username"));
             return user;
         }

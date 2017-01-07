@@ -4,6 +4,7 @@ import accountbook.PieChartItem;
 import accountbook.RevenueManager;
 import accountbook.SpendingManager;
 import accountbook.User;
+import java.awt.Color;
 import java.io.IOException;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -49,9 +50,9 @@ public class PieChartServlet extends HttpServlet {
             String action = request.getParameter("action");
             String date = request.getParameter("date");
 
-            if (action.equals("show_rev_pie")) {
+            if (action.equals("show_monthly_rev_pie")) {
                 pieChartItemList = rm.getPieChartItemList(user, date);
-            } else if (action.equals("show_spe_pie")) {
+            } else if (action.equals("show_monthly_spe_pie")) {
                 pieChartItemList = sm.getPieChartItemList(user, date);
             } else if (action.equals("show_yearly_rev_pie")) {
                 pieChartItemList = rm.getYearlyPieChartItemList(user, date);
@@ -75,6 +76,7 @@ public class PieChartServlet extends HttpServlet {
             // 表示するか、URLを動的に生成するかを指定）
             JFreeChart objCht = ChartFactory.createPieChart3D("", objDpd, true, false, false);
             objCht.setBorderVisible(true);
+            objCht.setBackgroundPaint(Color.WHITE);
             PiePlot objPp = (PiePlot) objCht.getPlot();
             objPp.setLabelGenerator(new StandardPieSectionLabelGenerator("{0} = {1}円({2})"));
             // バイナリ出力ストリームにJPEG形式で画像を出力
