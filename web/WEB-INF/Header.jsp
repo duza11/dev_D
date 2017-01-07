@@ -14,7 +14,7 @@
                 </div>
                 <div id="navbar" class="navbar-collapse collapse">
                     <%
-                        if ((User) session.getAttribute("user") == null) {
+                        if (session.getAttribute("user") == null) {
                     %>
                     <ul class="nav navbar-nav">
                         <li class="nav-item">
@@ -49,7 +49,6 @@
                                 <li><a href="?action=show_monthly_spe_bar&category=0">今月の支出</a></li>
                                 <li><a href="?action=show_yearly_rev_bar&category=0">今年の収入</a></li>
                                 <li><a href="?action=show_yearly_spe_bar&category=0">今年の支出</a></li>
-                                <li><a href="#loginModal" data-toggle="modal" data-target="#loginModal">ログイン</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -70,7 +69,9 @@
                 <!--/.nav-collapse -->
             </div>
         </nav>
-
+        <%
+            if (session.getAttribute("user") == null) {
+        %>
         <div id="loginModal" class="modal fade">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -99,7 +100,7 @@
                 </div>
             </div>
         </div>
-                
+
         <div id="registrationModal" class="modal fade">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -132,7 +133,9 @@
                 </div>
             </div>
         </div>
-
+        <%
+        } else {
+        %>
 
         <div id="withdrawModal" class="modal fade">
             <div class="modal-dialog">
@@ -151,3 +154,6 @@
                 </div>
             </div>
         </div>
+        <%
+            }
+        %>

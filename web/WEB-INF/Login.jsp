@@ -95,7 +95,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label class="col-xs-4 control-label">
-                                        パスワード（確認用）
+                                        パスワード（確認）
                                     </label>
                                     <div class="col-xs-8">
                                         <input class="form-control" type="password" name="pass2" required  pattern="^([a-zA-Z0-9]{6,})$" title="英数字6文字以上で入力してください。"placeholder="パスワード（確認）">

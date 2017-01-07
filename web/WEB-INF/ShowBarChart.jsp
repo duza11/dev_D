@@ -29,36 +29,40 @@
     <body>
         <%@include file="Header.jsp"%>
         <div class="container theme-showcase" role="main">
-            <div class="well">
-                <h1><%=dateArray[0]%>年<%=dateArray[1]%>月の<%=request.getParameter("action").equals("show_monthly_rev_bar") ? "収入" : "支出"%></h1>
-                <div class="row">
-                    <div class="col-md-2">
-                        <form id="submit_form" action="?action=<%=request.getParameter("action")%><% if (request.getParameter("date") != null) {%>&date=<%=request.getParameter("date")%><%}%>" method="post">
-                            <div class="form-group">
-                                <select class="form-control" id="submit_select" name="category" required>
-                                    <option value="0" <%=(request.getParameter("category").equals("0")) ? "selected" : ""%>>全て</option>
-                                    <%
-                                        for (Map.Entry<Integer, String> e : category.entrySet()) {
-                                    %>
-                                    <option value="<%=e.getKey()%>" <%=(Integer.parseInt(request.getParameter("category")) == e.getKey()) ? "selected" : ""%>><%=e.getValue()%></option>
-                                    <%
-                                        }
-                                    %>
-                                </select>
-
-                            </div>
-                        </form>
-                    </div>
-                    <div class="col-md-2">
-                        <p>
-                            <a class="btn btn-primary" href="?action=<%=request.getParameter("action")%>&category=<%=request.getParameter("category")%>&date=<%=previousYear%>-<%=previousMonth%>">前月</a>
-                            <a class="btn btn-primary" href="?action=<%=request.getParameter("action")%>&category=<%=request.getParameter("category")%>&date=<%=nextYear%>-<%=nextMonth%>">翌月</a>
-                        </p>
-                    </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <%=dateArray[0]%>年<%=dateArray[1]%>月の<%=request.getParameter("action").equals("show_monthly_rev_bar") ? "収入" : "支出"%>
                 </div>
-                <p>
-                    <img class="img-responsive" src="barchart.jpg?action=<%=request.getParameter("action")%>&category=<%=request.getParameter("category")%><%=(request.getParameter("date") != null) ? "&date=" + request.getParameter("date") : ""%>" />
-                </p>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <form id="submit_form" action="?action=<%=request.getParameter("action")%><% if (request.getParameter("date") != null) {%>&date=<%=request.getParameter("date")%><%}%>" method="post">
+                                <div class="form-group">
+                                    <select class="form-control" id="submit_select" name="category" required>
+                                        <option value="0" <%=(request.getParameter("category").equals("0")) ? "selected" : ""%>>全て</option>
+                                        <%
+                                            for (Map.Entry<Integer, String> e : category.entrySet()) {
+                                        %>
+                                        <option value="<%=e.getKey()%>" <%=(Integer.parseInt(request.getParameter("category")) == e.getKey()) ? "selected" : ""%>><%=e.getValue()%></option>
+                                        <%
+                                            }
+                                        %>
+                                    </select>
+
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-md-2">
+                            <p>
+                                <a class="btn btn-primary" href="?action=<%=request.getParameter("action")%>&category=<%=request.getParameter("category")%>&date=<%=previousYear%>-<%=previousMonth%>">前月</a>
+                                <a class="btn btn-primary" href="?action=<%=request.getParameter("action")%>&category=<%=request.getParameter("category")%>&date=<%=nextYear%>-<%=nextMonth%>">翌月</a>
+                            </p>
+                        </div>
+                    </div>
+                    <p>
+                        <img class="img-responsive" src="barchart.jpg?action=<%=request.getParameter("action")%>&category=<%=request.getParameter("category")%><%=(request.getParameter("date") != null) ? "&date=" + request.getParameter("date") : ""%>" />
+                    </p>
+                </div>
             </div>
         </div>
         <script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>

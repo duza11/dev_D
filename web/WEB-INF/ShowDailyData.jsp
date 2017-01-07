@@ -8,6 +8,14 @@
 <jsp:useBean id="rList" type="List<RevenueBlock>" scope="request" />
 <jsp:useBean id="sList" type="List<SpendingBlock>" scope="request" />
 <!DOCTYPE html>
+<%
+    int dateArray[] = new int[3];
+    for (int i = 0; i < dateArray.length; i++) {
+        dateArray[i] = Integer.parseInt(request.getParameter("date").split("-")[i]);
+    }
+    int rSum = 0;
+    int sSum = 0;
+%>
 <html lang="ja">
     <head>
         <meta charset="utf-8">
@@ -22,14 +30,19 @@
     <body>
         <%@include file="Header.jsp"%>
         <div class="container theme-showcase" role="main">
-            <h1><%=request.getParameter("date")%></h1>
-            <div class="well">
-                <h1>収入</h1>
+            <h1>収支の詳細（<%=dateArray[0]%>年<%=dateArray[1]%>月<%=dateArray[2]%>日）</h1>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    収入
+                </div>
                 <%
                     for (RevenueBlock rb : rList) {
                 %>
-                <h3><%=rb.getPlace()%></h3>
-                <table class="table table-bordered bg-white">
+                <div class="panel-body">
+                    <h3><%=rb.getPlace()%></h3>
+                </div>
+                <table class="table table-bordered table-striped"">
                     <thead>
                         <tr>
                             <th>ジャンル</th>
@@ -41,6 +54,7 @@
                     <tbody>
                         <%
                             for (RevenueItem ri : rb.getRevenueItemList()) {
+                                rSum += ri.getPrice() * ri.getCount();
                         %>
                         <tr>
                             <td><%=ri.getKindName()%></td>
@@ -56,41 +70,52 @@
                 <%
                     }
                 %>
+                <div class="panel-footer">
+                    合計金額 ： <%=rSum%>
+                </div>
             </div>
 
-            <div class="well">
-                <h1>支出</h1>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    支出
+                </div>
                 <%
                     for (SpendingBlock sb : sList) {
                 %>
-                <h3><%=sb.getPlace()%></h3>
-                <table class="table table-bordered bg-white">
+                <div class="panel-body">
+                    <h3><%=sb.getPlace()%></h3>
+                </div>
+                <table class="table table-bordered table-striped" style=" padding-bottom: 20px;">
                     <thead>
                         <tr>
                             <th>ジャンル</th>
                             <th>名前</th>
                             <th>金額</th>
                             <th>数</th>
-                        </tr> 
+                        </tr>
                     </thead>
                     <tbody>
                         <%
                             for (SpendingItem si : sb.getSpendingItemList()) {
+                                sSum += si.getPrice() * si.getCount();
                         %>
                         <tr>
                             <td><%=si.getKindName()%></td>
                             <td><%=si.getItemName()%></td>
                             <td><%=si.getPrice()%></td>
                             <td><%=si.getCount()%></td>
+                            <%
+                                }
+                            %>
                         </tr>
-                        <%
-                            }
-                        %>
                     </tbody>
                 </table>
                 <%
                     }
                 %>
+                <div class="panel-footer">
+                    合計金額 ： <%=sSum%>
+                </div>
             </div>
         </div>
         <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->

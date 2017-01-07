@@ -16,16 +16,20 @@
     <body>
         <%@include file="Header.jsp"%>
         <div class="container theme-showcase" role="main">
-            <div class="well">
-                <h1><%=date%>年の<%=request.getParameter("action").equals("show_monthly_rev_pie") ? "収入" : "支出"%></h1>
-                <p>
-                    <a class="btn btn-primary" href="?action=<%=request.getParameter("action")%>&date=<%=Integer.parseInt(date) - 1%>">前年</a>
-                    <a class="btn btn-primary" href="?action=<%=request.getParameter("action")%>&date=<%=Integer.parseInt(date) + 1%>">翌年</a>
-                </p>
-                <p>
-                    ${requestScope['map']}
-                    <img class="img-responsive" src="piechart.jpg?action=<%=request.getParameter("action")%><%=(request.getParameter("date") != null) ? "&date=" + request.getParameter("date") : ""%>" usemap="#map" border="0" />
-                </p>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <%=date%>年の<%=request.getParameter("action").equals("show_monthly_rev_pie") ? "収入" : "支出"%>
+                </div>
+                <div class="panel-body">
+                    <p>
+                        <a class="btn btn-primary" href="?action=<%=request.getParameter("action")%>&date=<%=Integer.parseInt(date) - 1%>">前年</a>
+                        <a class="btn btn-primary" href="?action=<%=request.getParameter("action")%>&date=<%=Integer.parseInt(date) + 1%>">翌年</a>
+                    </p>
+                    <p>
+                        ${requestScope['map']}
+                        <img class="img-responsive" src="piechart.jpg?action=<%=request.getParameter("action")%><%=(request.getParameter("date") != null) ? "&date=" + request.getParameter("date") : ""%>" usemap="#map" border="0" />
+                    </p>
+                </div>
             </div>
         </div>
         <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
