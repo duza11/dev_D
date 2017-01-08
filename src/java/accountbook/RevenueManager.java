@@ -54,29 +54,50 @@ public class RevenueManager {
         rs.close();
     }
 
-    public void registerRevenueBlock(User user, RevenueBlock rb) throws Exception {
+    public void registerRevenueBlock(int userId, int blockId, RevenueBlock rb) throws Exception {
         String sql = "insert into revenue_item(block_id, item_name, kind_id, price, count) "
                 + "select auto_increment, ?, ?, ?, ? "
                 + "from information_schema.tables where table_name = 'revenue_block' "
                 + "and table_schema = 'account_book'";
+
+        if (blockId != 0) {
+            sql = "insert into revenue_item(block_id, item_name, kind_id, price, count) "
+                    + "values(?, ?, ?, ?, ?)";
+        }
+
         dc.openConnection(sql);
 
         for (RevenueItem ri : rb.getRevenueItemList()) {
             ps = dc.getPreparedStatement();
-            ps.setString(1, ri.getItemName());
-            ps.setInt(2, ri.getKindId());
-            ps.setInt(3, ri.getPrice());
-            ps.setInt(4, ri.getCount());
+            if (blockId == 0) {
+                ps.setString(1, ri.getItemName());
+                ps.setInt(2, ri.getKindId());
+                ps.setInt(3, ri.getPrice());
+                ps.setInt(4, ri.getCount());
+            } else {
+                ps.setInt(1, blockId);
+                ps.setString(2, ri.getItemName());
+                ps.setInt(3, ri.getKindId());
+                ps.setInt(4, ri.getPrice());
+                ps.setInt(5, ri.getCount());
+            }
             ps.addBatch();
         }
         ps.executeBatch();
 
-        sql = "insert into revenue_block values(null, ?, ?, ?)";
+        sql = "insert into revenue_block values(" + ((blockId == 0) ? "null" : "?") + ", ?, ?, ?)";
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
-        ps.setInt(1, user.getUserId());
-        ps.setDate(2, new Date(rb.getDate().getTime()));
-        ps.setString(3, rb.getPlace());
+        if (blockId == 0) {
+            ps.setInt(1, userId);
+            ps.setDate(2, new Date(rb.getDate().getTime()));
+            ps.setString(3, rb.getPlace());
+        } else {
+            ps.setInt(1, blockId);
+            ps.setInt(2, userId);
+            ps.setDate(3, new Date(rb.getDate().getTime()));
+            ps.setString(4, rb.getPlace());
+        }
         ps.executeUpdate();
     }
 
@@ -425,7 +446,7 @@ public class RevenueManager {
                 + "ri.kind_id, rb.block_id, rb.place, rb.date from users as u, "
                 + "revenue_block as rb, revenue_item as ri, revenue_item_kind as rk "
                 + "where u.user_id = rb.user_id and rb.block_id = ri.block_id "
-                + "and ri.kind_id = rk.kind_id and u.user_id = ? and rb.date = ?";
+                + "and ri.kind_id = rk.kind_id and u.user_id = ? and rb.date = ? order by rb.block_id, ri.item_id asc";
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
         ps.setInt(1, user.getUserId());
@@ -473,10 +494,10 @@ public class RevenueManager {
         ps.setInt(1, userId);
         ps.setInt(2, blockId);
         rs = ps.executeQuery();
-        
+
         RevenueBlock rb = new RevenueBlock();
         List<RevenueItem> riList = new ArrayList<>();
-        
+
         while (rs.next()) {
             rb.setBlockId(rs.getInt("rb.block_id"));
             rb.setDate(rs.getString("date"));
@@ -488,7 +509,7 @@ public class RevenueManager {
             ri.setCount(rs.getInt("count"));
             riList.add(ri);
         }
-        
+
         if (riList.isEmpty()) {
             return null;
         }

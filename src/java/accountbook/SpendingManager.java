@@ -51,28 +51,49 @@ public class SpendingManager {
         rs.close();
     }
 
-    public void registerSpendingBlock(User user, SpendingBlock sb) throws Exception {
+    public void registerSpendingBlock(int userId, int blockId, SpendingBlock sb) throws Exception {
         String sql = "insert into spending_item(block_id, item_name, kind_id, price, count) "
                 + "select auto_increment, ?, ?, ?, ? "
                 + "from information_schema.tables where table_name = 'spending_block' "
                 + "and table_schema = 'account_book'";
+        
+        if (blockId != 0) {
+            sql = "insert into spending_item(block_id, item_name, kind_id, price, count) "
+                + "values(?, ?, ?, ?, ?)";
+        }
+        
         dc.openConnection(sql);
         for (SpendingItem si : sb.getSpendingItemList()) {
             ps = dc.getPreparedStatement();
-            ps.setString(1, si.getItemName());
-            ps.setInt(2, si.getKindId());
-            ps.setInt(3, si.getPrice());
-            ps.setInt(4, si.getCount());
+            if (blockId == 0) {
+                ps.setString(1, si.getItemName());
+                ps.setInt(2, si.getKindId());
+                ps.setInt(3, si.getPrice());
+                ps.setInt(4, si.getCount());
+            } else {
+                ps.setInt(1, blockId);
+                ps.setString(2, si.getItemName());
+                ps.setInt(3, si.getKindId());
+                ps.setInt(4, si.getPrice());
+                ps.setInt(5, si.getCount());
+            }
             ps.addBatch();
         }
         ps.executeBatch();
 
-        sql = "insert into spending_block values(null, ?, ?, ?)";
+        sql = "insert into spending_block values(" + ((blockId == 0) ? "null" : "?") + ", ?, ?, ?)";
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
-        ps.setInt(1, user.getUserId());
-        ps.setDate(2, new Date(sb.getDate().getTime()));
-        ps.setString(3, sb.getPlace());
+        if (blockId == 0) {
+            ps.setInt(1, userId);
+            ps.setDate(2, new Date(sb.getDate().getTime()));
+            ps.setString(3, sb.getPlace());
+        } else {
+            ps.setInt(1, blockId);
+            ps.setInt(2, userId);
+            ps.setDate(3, new Date(sb.getDate().getTime()));
+            ps.setString(4, sb.getPlace());
+        }
         ps.executeUpdate();
     }
 
@@ -421,7 +442,7 @@ public class SpendingManager {
                 + "si.kind_id, sb.block_id, sb.place, sb.date from users as u, "
                 + "spending_block as sb, spending_item as si, spending_item_kind as sk "
                 + "where u.user_id = sb.user_id and sb.block_id = si.block_id "
-                + "and si.kind_id = sk.kind_id and u.user_id = ? and sb.date = ?";
+                + "and si.kind_id = sk.kind_id and u.user_id = ? and sb.date = ? order by sb.block_id, si.item_id asc";
         dc.openConnection(sql);
         ps = dc.getPreparedStatement();
         ps.setInt(1, user.getUserId());
@@ -469,10 +490,10 @@ public class SpendingManager {
         ps.setInt(1, userId);
         ps.setInt(2, blockId);
         rs = ps.executeQuery();
-        
+
         SpendingBlock sb = new SpendingBlock();
         List<SpendingItem> siList = new ArrayList<>();
-        
+
         while (rs.next()) {
             sb.setBlockId(rs.getInt("sb.block_id"));
             sb.setDate(rs.getString("date"));
@@ -484,7 +505,7 @@ public class SpendingManager {
             si.setCount(rs.getInt("count"));
             siList.add(si);
         }
-        
+
         if (siList.isEmpty()) {
             return null;
         }

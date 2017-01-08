@@ -171,11 +171,11 @@ public class AccountBookServlet extends HttpServlet {
                 setSpendingItemKindMap(sm, req);
                 nextView = getSpendingBlock(user, rm, sm, req);
             } else if (action.equals("register_rev")) {
-                registerRevenue(user, rm, req);
+                registerRevenue(user, rm, req, 0);
                 setDateArray(rm, sm, user, req);
                 nextView = SHOW_CALENDAR_JSP;
             } else if (action.equals("register_spe")) {
-                registerSpending(user, sm, req);
+                registerSpending(user, sm, req, 0);
                 setDateArray(rm, sm, user, req);
                 nextView = SHOW_CALENDAR_JSP;
             } else if (action.equals("update_rev")) {
@@ -407,41 +407,7 @@ public class AccountBookServlet extends HttpServlet {
         req.setAttribute("kind", spendingItemKindMap);
     }
 
-    private void registerSpending(User user, SpendingManager sm, HttpServletRequest req) throws Exception {
-        SpendingBlock sb = new SpendingBlock();
-        if (!isDate(req.getParameter("date"), "yyyy-MM-dd", "yyyy-M-dd", "yyyy-MM-d", "yyyy-M-d")) {
-            req.setAttribute("error", "不正なパラメータです");
-            return;
-        }
-        sb.setDate(req.getParameter("date"));
-        sb.setPlace(req.getParameter("place"));
-
-        List<SpendingItem> spendingItemList = new ArrayList<SpendingItem>();
-
-        for (int i = 0; req.getParameter("kind[" + i + "]") != null; i++) {
-            String name = req.getParameter("item_name[" + i + "]");
-            int kind = Integer.parseInt(req.getParameter("kind[" + i + "]"));
-            int price = Integer.parseInt(req.getParameter("price[" + i + "]"));
-            int count = Integer.parseInt(req.getParameter("count[" + i + "]"));
-            if (kind < 1 || kind > sm.getSpendingKindMap().size() || price < 0 || count < 1) {
-                req.setAttribute("error", "不正なパラメータです");
-                return;
-            }
-            SpendingItem si = new SpendingItem();
-            si.setItemName(name);
-            si.setKindId(kind);
-            si.setPrice(price);
-            si.setCount(count);
-            spendingItemList.add(si);
-        }
-
-        sb.setSpendingItemList(spendingItemList);
-
-        sm.registerSpendingBlock(user, sb);
-        req.setAttribute("success", "登録が完了しました");
-    }
-
-    private void registerRevenue(User user, RevenueManager rm, HttpServletRequest req) throws Exception {
+    private void registerRevenue(User user, RevenueManager rm, HttpServletRequest req, int blockId) throws Exception {
         RevenueBlock rb = new RevenueBlock();
         if (!isDate(req.getParameter("date"), "yyyy-MM-dd", "yyyy-M-dd", "yyyy-MM-d", "yyyy-M-d")) {
             req.setAttribute("error", "不正なパラメータです");
@@ -471,8 +437,104 @@ public class AccountBookServlet extends HttpServlet {
 
         rb.setRevenueItemList(revenueItemList);
 
-        rm.registerRevenueBlock(user, rb);
+        rm.registerRevenueBlock(user.getUserId(), blockId, rb);
         req.setAttribute("success", "登録が完了しました");
+    }
+
+    private void registerSpending(User user, SpendingManager sm, HttpServletRequest req, int blockId) throws Exception {
+        SpendingBlock sb = new SpendingBlock();
+        if (!isDate(req.getParameter("date"), "yyyy-MM-dd", "yyyy-M-dd", "yyyy-MM-d", "yyyy-M-d")) {
+            req.setAttribute("error", "不正なパラメータです");
+            return;
+        }
+        sb.setDate(req.getParameter("date"));
+        sb.setPlace(req.getParameter("place"));
+
+        List<SpendingItem> spendingItemList = new ArrayList<SpendingItem>();
+
+        for (int i = 0; req.getParameter("kind[" + i + "]") != null; i++) {
+            String name = req.getParameter("item_name[" + i + "]");
+            int kind = Integer.parseInt(req.getParameter("kind[" + i + "]"));
+            int price = Integer.parseInt(req.getParameter("price[" + i + "]"));
+            int count = Integer.parseInt(req.getParameter("count[" + i + "]"));
+            if (kind < 1 || kind > sm.getSpendingKindMap().size() || price < 0 || count < 1) {
+                req.setAttribute("error", "不正なパラメータです");
+                return;
+            }
+            SpendingItem si = new SpendingItem();
+            si.setItemName(name);
+            si.setKindId(kind);
+            si.setPrice(price);
+            si.setCount(count);
+            spendingItemList.add(si);
+        }
+
+        sb.setSpendingItemList(spendingItemList);
+
+        sm.registerSpendingBlock(user.getUserId(), blockId, sb);
+        req.setAttribute("success", "登録が完了しました");
+    }
+
+    private String getRevenueBlock(User user, RevenueManager rm, SpendingManager sm, HttpServletRequest req) throws Exception {
+        int blockId = Integer.parseInt(req.getParameter("block_id"));
+        RevenueBlock rb = rm.getRevenueBlock(user.getUserId(), blockId);
+
+        if (rb == null) {
+            req.setAttribute("error", "不正なパラメータです");
+            setDateArray(rm, sm, user, req);
+            return SHOW_CALENDAR_JSP;
+        }
+
+        req.setAttribute("rb", rb);
+        return INPUT_REVENUE_UPDATE_JSP;
+    }
+
+    private String getSpendingBlock(User user, RevenueManager rm, SpendingManager sm, HttpServletRequest req) throws Exception {
+        int blockId = Integer.parseInt(req.getParameter("block_id"));
+        SpendingBlock sb = sm.getSpendingBlock(user.getUserId(), blockId);
+
+        if (sb == null) {
+            req.setAttribute("error", "不正なパラメータです");
+            setDateArray(rm, sm, user, req);
+            return SHOW_CALENDAR_JSP;
+        }
+
+        req.setAttribute("sb", sb);
+        return INPUT_SPENDING_UPDATE_JSP;
+    }
+
+    private boolean deleteRevenue(User user, RevenueManager rm, HttpServletRequest req) throws Exception {
+        int blockId = Integer.parseInt(req.getParameter("block_id"));
+        if (rm.deleteRevenue(user.getUserId(), blockId)) {
+            req.setAttribute("success", "削除が完了しました");
+            return true;
+        }
+        req.setAttribute("error", "不正な操作です");
+        return false;
+    }
+
+    private boolean deleteSpending(User user, SpendingManager sm, HttpServletRequest req) throws Exception {
+        int blockId = Integer.parseInt(req.getParameter("block_id"));
+        if (sm.deleteSpending(user.getUserId(), blockId)) {
+            req.setAttribute("success", "削除が完了しました");
+            return true;
+        }
+        req.setAttribute("error", "不正な操作です");
+        return false;
+    }
+
+    private void updateRevenue(User user, RevenueManager rm, HttpServletRequest req) throws Exception {
+        if (deleteRevenue(user, rm, req)) {
+            registerRevenue(user, rm, req, Integer.parseInt(req.getParameter("block_id")));
+            req.setAttribute("success", "更新が完了しました");
+        }
+    }
+
+    private void updateSpending(User user, SpendingManager sm, HttpServletRequest req) throws Exception {
+        if (deleteSpending(user, sm, req)) {
+            registerSpending(user, sm, req, Integer.parseInt(req.getParameter("block_id")));
+            req.setAttribute("success", "更新が完了しました");
+        }
     }
 
     private String createMonthlyPieChart(User user, RevenueManager rm, SpendingManager sm, HttpServletRequest req) throws Exception {
@@ -639,68 +701,6 @@ public class AccountBookServlet extends HttpServlet {
         req.setAttribute("rList", rList);
         req.setAttribute("sList", sList);
         return SHOW_DAILY_DATA_JSP;
-    }
-
-    private String getRevenueBlock(User user, RevenueManager rm, SpendingManager sm, HttpServletRequest req) throws Exception {
-        int blockId = Integer.parseInt(req.getParameter("block_id"));
-        RevenueBlock rb = rm.getRevenueBlock(user.getUserId(), blockId);
-
-        if (rb == null) {
-            req.setAttribute("error", "不正なパラメータです");
-            setDateArray(rm, sm, user, req);
-            return SHOW_CALENDAR_JSP;
-        }
-
-        req.setAttribute("rb", rb);
-        return INPUT_REVENUE_UPDATE_JSP;
-    }
-
-    private String getSpendingBlock(User user, RevenueManager rm, SpendingManager sm, HttpServletRequest req) throws Exception {
-        int blockId = Integer.parseInt(req.getParameter("block_id"));
-        SpendingBlock sb = sm.getSpendingBlock(user.getUserId(), blockId);
-
-        if (sb == null) {
-            req.setAttribute("error", "不正なパラメータです");
-            setDateArray(rm, sm, user, req);
-            return SHOW_CALENDAR_JSP;
-        }
-
-        req.setAttribute("sb", sb);
-        return INPUT_SPENDING_UPDATE_JSP;
-    }
-
-    private boolean deleteRevenue(User user, RevenueManager rm, HttpServletRequest req) throws Exception {
-        int blockId = Integer.parseInt(req.getParameter("block_id"));
-        if (rm.deleteRevenue(user.getUserId(), blockId)) {
-            req.setAttribute("success", "削除が完了しました");
-            return true;
-        }
-        req.setAttribute("error", "不正な操作です");
-        return false;
-    }
-
-    private boolean deleteSpending(User user, SpendingManager sm, HttpServletRequest req) throws Exception {
-        int blockId = Integer.parseInt(req.getParameter("block_id"));
-        if (sm.deleteSpending(user.getUserId(), blockId)) {
-            req.setAttribute("success", "削除が完了しました");
-            return true;
-        }
-        req.setAttribute("error", "不正な操作です");
-        return false;
-    }
-
-    private void updateRevenue(User user, RevenueManager rm, HttpServletRequest req) throws Exception {
-        if (deleteRevenue(user, rm, req)) {
-            registerRevenue(user, rm, req);
-            req.setAttribute("success", "更新が完了しました");
-        }
-    }
-
-    private void updateSpending(User user, SpendingManager sm, HttpServletRequest req) throws Exception {
-        if (deleteSpending(user, sm, req)) {
-            registerSpending(user, sm, req);
-            req.setAttribute("success", "更新が完了しました");
-        }
     }
 
     private boolean isDate(String date, String... formats) {
