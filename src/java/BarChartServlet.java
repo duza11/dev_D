@@ -56,16 +56,16 @@ public class BarChartServlet extends HttpServlet {
             String date = request.getParameter("date");
 
             if (action.equals("show_monthly_rev_bar")) {
-                barChartItemList = (kind == 0)? rm.getStackedBarChartItemList(user, kind, date) : rm.getBarChartItemList(user, kind, date);
+                barChartItemList = (kind == 0) ? rm.getStackedBarChartItemList(user, kind, date) : rm.getBarChartItemList(user, kind, date);
                 dataLabel = "日";
             } else if (action.equals("show_monthly_spe_bar")) {
-                barChartItemList = (kind == 0)? sm.getStackedBarChartItemList(user, kind, date) : sm.getBarChartItemList(user, kind, date);
+                barChartItemList = (kind == 0) ? sm.getStackedBarChartItemList(user, kind, date) : sm.getBarChartItemList(user, kind, date);
                 dataLabel = "日";
             } else if (action.equals("show_yearly_rev_bar")) {
-                barChartItemList = (kind == 0)? rm.getYearlyStackedBarChartItemList(user, kind, date) : rm.getYearlyBarChartItemList(user, kind, date);
+                barChartItemList = (kind == 0) ? rm.getYearlyStackedBarChartItemList(user, kind, date) : rm.getYearlyBarChartItemList(user, kind, date);
                 dataLabel = "月";
             } else if (action.equals("show_yearly_spe_bar")) {
-                barChartItemList = (kind == 0)? sm.getYearlyStackedBarChartItemList(user, kind, date) : sm.getYearlyBarChartItemList(user, kind, date);
+                barChartItemList = (kind == 0) ? sm.getYearlyStackedBarChartItemList(user, kind, date) : sm.getYearlyBarChartItemList(user, kind, date);
                 dataLabel = "月";
             } else {
                 request.setAttribute("message", "不正なパラメータが検出されました");
@@ -87,6 +87,16 @@ public class BarChartServlet extends HttpServlet {
             na.setLowerBound(0);
             BarRenderer br = (BarRenderer) cp.getRenderer();
             br.setShadowVisible(false);
+            if (kind != 0) {
+                int rSize = rm.getRevenueKindMap().size();
+                int sSize = sm.getSpendingKindMap().size();
+                for (int i = 0; i < ((rSize > sSize) ? rSize : sSize); i++) {
+                    if (kind - 1 == i) {
+                        br.setSeriesPaint(0, br.lookupSeriesPaint(i));
+                    }
+                    br.lookupSeriesPaint(i);
+                }
+            }
             response.setContentType("image/jpeg");
             ServletOutputStream objSos = response.getOutputStream();
             ChartUtilities.writeChartAsJPEG(objSos, objCht, 720, 480);
