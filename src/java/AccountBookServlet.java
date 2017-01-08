@@ -155,11 +155,9 @@ public class AccountBookServlet extends HttpServlet {
             } else if (action.equals("show_monthly_spe_bar")) {
                 nextView = createMonthlyBarChart(user, rm, sm, req);
             } else if (action.equals("show_yearly_rev_bar")) {
-                createYearlyBarChart(user, rm, sm, req);
-                nextView = SHOW_YEARLY_BAR_CHART_JSP;
+                nextView = createYearlyBarChart(user, rm, sm, req);
             } else if (action.equals("show_yearly_spe_bar")) {
-                createYearlyBarChart(user, rm, sm, req);
-                nextView = SHOW_YEARLY_BAR_CHART_JSP;
+                nextView = createYearlyBarChart(user, rm, sm, req);
             } else if (action.equals("input_rev")) {
                 setRevenueItemKindMap(rm, req);
                 nextView = INPUT_REVENUE_JSP;
@@ -572,27 +570,26 @@ public class AccountBookServlet extends HttpServlet {
     }
 
     private String createMonthlyBarChart(User user, RevenueManager rm, SpendingManager sm, HttpServletRequest req) throws Exception {
-        String date = req.getParameter("date");
+        String date = req.getParameter("date");Map<Integer, String> itemKindMap = null;
 
         if (date == null) {
             java.util.Date d = new java.util.Date();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
             date = sdf.format(d);
         }
-
-        // !date.matches("\\d+-(0?[1-9]|1[0-2])")
-        if (!isDate(date, "yyyy-MM", "yyyy-M")) {
-            req.setAttribute("error", "不正なパラメータです");
-            setDateArray(rm, sm, user, req);
-            return SHOW_CALENDAR_JSP;
-        }
-
-        Map<Integer, String> itemKindMap = null;
-
+        
         if (req.getParameter("action").equals("show_monthly_rev_bar")) {
             itemKindMap = rm.getRevenueKindMap();
         } else {
             itemKindMap = sm.getSpendingKindMap();
+        }
+        
+        int category = Integer.parseInt(req.getParameter("category"));
+
+        if (!isDate(date, "yyyy-MM", "yyyy-M") || category < 0 || category > itemKindMap.size()) {
+            req.setAttribute("error", "不正なパラメータです");
+            setDateArray(rm, sm, user, req);
+            return SHOW_CALENDAR_JSP;
         }
 
         req.setAttribute("date", date);
@@ -608,19 +605,21 @@ public class AccountBookServlet extends HttpServlet {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
             date = sdf.format(d);
         }
-
-        if (!isDate(date, "yyyy")) {
-            req.setAttribute("error", "不正なパラメータです");
-            setDateArray(rm, sm, user, req);
-            return SHOW_CALENDAR_JSP;
-        }
-
+        
         Map<Integer, String> itemKindMap = null;
 
         if (req.getParameter("action").equals("show_yearly_rev_bar")) {
             itemKindMap = rm.getRevenueKindMap();
         } else {
             itemKindMap = sm.getSpendingKindMap();
+        }
+        
+        int category = Integer.parseInt(req.getParameter("category"));
+
+        if (!isDate(date, "yyyy") || category < 0 || category > itemKindMap.size()) {
+            req.setAttribute("error", "不正なパラメータです");
+            setDateArray(rm, sm, user, req);
+            return SHOW_CALENDAR_JSP;
         }
 
         req.setAttribute("date", date);

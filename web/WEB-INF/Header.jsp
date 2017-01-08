@@ -57,6 +57,8 @@
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">設定<span class="caret"></span></a>
                             <ul class="dropdown-menu">
+                                <li class="dropdown-header"><%=((User) session.getAttribute("user")).getUsername()%>でログイン中</li>
+                                <li role="separator" class="divider"></li>
                                 <li><a href="?action=logout">ログアウト</a></li>
                                 <li><a href="#withdrawModal" data-toggle="modal" data-target="#withdrawModal">退会</a></li>
                             </ul>
