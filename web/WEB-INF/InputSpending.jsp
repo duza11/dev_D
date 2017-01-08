@@ -20,7 +20,7 @@
         <div class="container theme-showcase" role="main">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    支出額の入力画面
+                    <p class="panel-title">支出額の入力画面</p>
                 </div>
                 <div class="panel-body">
                     <form action="?action=register_spe" method="post">

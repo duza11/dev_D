@@ -21,7 +21,7 @@
         <div class="container theme-showcase" role="main">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <%=date%>年の<%=request.getParameter("action").equals("show_monthly_rev_bar") ? "収入" : "支出"%>
+                    <p class="panel-title"><%=date%>年の<%=request.getParameter("action").equals("show_monthly_rev_bar") ? "収入" : "支出"%></p>
                 </div>
                 <div class="panel-body">
                     <div class="row">

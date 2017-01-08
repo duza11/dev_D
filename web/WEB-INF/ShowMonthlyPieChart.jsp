@@ -29,7 +29,7 @@
         <div class="container theme-showcase" role="main">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <%=dateArray[0]%>年<%=dateArray[1]%>月の<%=request.getParameter("action").equals("show_monthly_rev_pie") ? "収入" : "支出"%>
+                    <p class="panel-title"><%=dateArray[0]%>年<%=dateArray[1]%>月の<%=request.getParameter("action").equals("show_monthly_rev_pie") ? "収入" : "支出"%></p>
                 </div>
                 <div class="panel-body">
                     <p>

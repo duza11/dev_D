@@ -15,7 +15,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-        <title>支出額の入力</title>
+        <title>支出額の更新</title>
         <link href="css/bootstrap.min.css" rel="stylesheet">
         <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" rel="stylesheet">
         <link href="css/style.css" rel="stylesheet">
@@ -25,7 +25,7 @@
         <div class="container theme-showcase" role="main">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    収入額の更新
+                    <p class="panel-title">収入額の更新</p>
                 </div>
                 <div class="panel-body">
                     <form class="form-vertical" action="?action=update_spe&block_id=<%=request.getParameter("block_id")%>" method="post">

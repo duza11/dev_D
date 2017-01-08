@@ -25,7 +25,7 @@
         <div class="container theme-showcase" role="main">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    収入額の更新
+                    <p class="panel-title">収入額の更新</p>
                 </div>
                 <div class="panel-body">
                     <form class="form-vertical" action="?action=update_rev&block_id=<%=request.getParameter("block_id")%>" method="post">

@@ -422,18 +422,18 @@ public class AccountBookServlet extends HttpServlet {
 
         for (int i = 0; req.getParameter("kind[" + i + "]") != null; i++) {
             String name = req.getParameter("item_name[" + i + "]");
-            String kind = req.getParameter("kind[" + i + "]");
-            String price = req.getParameter("price[" + i + "]");
-            String count = req.getParameter("count[" + i + "]");
-            if (!isValid(kind) || !isValid(price) || !isValid(count)) {
+            int kind = Integer.parseInt(req.getParameter("kind[" + i + "]"));
+            int price = Integer.parseInt(req.getParameter("price[" + i + "]"));
+            int count = Integer.parseInt(req.getParameter("count[" + i + "]"));
+            if (kind < 1 || kind > sm.getSpendingKindMap().size() || price < 0 || count < 1) {
                 req.setAttribute("error", "不正なパラメータです");
                 return;
             }
             SpendingItem si = new SpendingItem();
             si.setItemName(name);
-            si.setKindId(Integer.parseInt(kind));
-            si.setPrice(Integer.parseInt(price));
-            si.setCount(Integer.parseInt(count));
+            si.setKindId(kind);
+            si.setPrice(price);
+            si.setCount(count);
             spendingItemList.add(si);
         }
 
@@ -456,18 +456,18 @@ public class AccountBookServlet extends HttpServlet {
 
         for (int i = 0; req.getParameter("kind[" + i + "]") != null; i++) {
             String name = req.getParameter("item_name[" + i + "]");
-            String kind = req.getParameter("kind[" + i + "]");
-            String price = req.getParameter("price[" + i + "]");
-            String count = req.getParameter("count[" + i + "]");
-            if (!isValid(kind) || !isValid(price) || !isValid(count)) {
+            int kind = Integer.parseInt(req.getParameter("kind[" + i + "]"));
+            int price = Integer.parseInt(req.getParameter("price[" + i + "]"));
+            int count = Integer.parseInt(req.getParameter("count[" + i + "]"));
+            if (kind < 1 || kind > rm.getRevenueKindMap().size() || price < 0 || count < 1) {
                 req.setAttribute("error", "不正なパラメータです");
                 return;
             }
             RevenueItem ri = new RevenueItem();
             ri.setItemName(name);
-            ri.setKindId(Integer.parseInt(kind));
-            ri.setPrice(Integer.parseInt(price));
-            ri.setCount(Integer.parseInt(count));
+            ri.setKindId(kind);
+            ri.setPrice(price);
+            ri.setCount(count);
             revenueItemList.add(ri);
         }
 
