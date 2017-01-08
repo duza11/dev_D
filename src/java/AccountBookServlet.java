@@ -31,9 +31,9 @@ public class AccountBookServlet extends HttpServlet {
     // 支出の入力のビューを担当
     private static String INPUT_SPENDING_JSP = "/WEB-INF/InputSpending.jsp";
     // 収入の円グラフのビューを担当
-    private static String SHOW_MONTHLY_PIE_CHART_JSP = "/WEB-INF/ShowPieChart.jsp";
+    private static String SHOW_MONTHLY_PIE_CHART_JSP = "/WEB-INF/ShowMonthlyPieChart.jsp";
     // 棒グラフのビューを担当
-    private static String SHOW_MONTHLY_BAR_CHART_JSP = "/WEB-INF/ShowBarChart.jsp";
+    private static String SHOW_MONTHLY_BAR_CHART_JSP = "/WEB-INF/ShowMonthlyBarChart.jsp";
 
     private static String SHOW_YEARLY_BAR_CHART_JSP = "/WEB-INF/ShowYearlyBarChart.jsp";
 
@@ -246,6 +246,8 @@ public class AccountBookServlet extends HttpServlet {
             req.setAttribute("error", "記入漏れがあります");
         } else if (!password.equals(password2)) {
             req.setAttribute("error", "パスワードが確認用と一致しません");
+        } else if (!userName.matches("^([a-zA-Z0-9]{6,})$") || !password.matches("^([a-zA-Z0-9]{6,})$") || !password2.matches("^([a-zA-Z0-9]{6,})$")) {
+            req.setAttribute("error", "半角英数字で6文字以上入力してください");
         } else if (um.registration(userName, password)) {
             req.setAttribute("success", "登録に成功しました");
         } else {
@@ -384,7 +386,7 @@ public class AccountBookServlet extends HttpServlet {
             String kind = req.getParameter("kind[" + i + "]");
             String price = req.getParameter("price[" + i + "]");
             String count = req.getParameter("count[" + i + "]");
-            if (!isValid(name) || !isValid(kind) || !isValid(price) || !isValid(count)) {
+            if (!isValid(kind) || !isValid(price) || !isValid(count)) {
                 req.setAttribute("error", "不正なパラメータです");
                 return;
             }
@@ -418,7 +420,7 @@ public class AccountBookServlet extends HttpServlet {
             String kind = req.getParameter("kind[" + i + "]");
             String price = req.getParameter("price[" + i + "]");
             String count = req.getParameter("count[" + i + "]");
-            if (!isValid(name) || !isValid(kind) || !isValid(price) || !isValid(count)) {
+            if (!isValid(kind) || !isValid(price) || !isValid(count)) {
                 req.setAttribute("error", "不正なパラメータです");
                 return;
             }

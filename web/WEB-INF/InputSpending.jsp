@@ -40,7 +40,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-3">
-                                    <input class="form-control" type="text" name="place" placeholder="店名" required>
+                                    <input class="form-control" type="text" name="place" placeholder="店名">
                                 </div>
                             </div>
                         </div>

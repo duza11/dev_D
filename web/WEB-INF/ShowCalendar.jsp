@@ -1,3 +1,4 @@
+<%@page import="accountbook.DailyData"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page trimDirectiveWhitespaces="true"%>
 <!DOCTYPE html>
@@ -7,6 +8,15 @@
 <jsp:useBean id="abc" class="accountbook.AccountBookCalendar" scope="request" />
 
 <%
+    int rSum = 0, sSum = 0;
+    for (DailyData dd : abc.getDayList()) {
+        if (dd.getRevenue() != -1) {
+            rSum += dd.getRevenue();
+        }
+        if (dd.getSpending() != -1) {
+            sSum += dd.getSpending();
+        }
+    }
     int previousMonth = (abc.getMonth() + 1 - 2 + 12) % 12 + 1;
     int previousYear = abc.getYear() - previousMonth / 12;
     int nextMonth = (abc.getMonth() + 1) % 12 + 1;
@@ -42,6 +52,20 @@
                 </div>
                 <% }%>
             </div>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>合計収入額</th>
+                        <th>合計支出額</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><%=rSum%></td>
+                        <td><%=sSum%></td>
+                    </tr>
+                </tbody>
+            </table>
             <table class="calendar">
                 <tr>
                     <td class="text-center"><a href="?action=show_calendar&year=<%=previousYear%>&month=<%=previousMonth%>">前月</a></td>

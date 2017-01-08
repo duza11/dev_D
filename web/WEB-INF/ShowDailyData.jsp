@@ -40,12 +40,12 @@
                     for (RevenueBlock rb : rList) {
                 %>
                 <div class="panel-body">
-                    <h3><%=rb.getPlace()%></h3>
+                    <h3>店名 ： <%=rb.getPlace()%></h3>
                 </div>
-                <table class="table table-bordered table-striped"">
+                <table class="table table-bordered table-striped">
                     <thead>
                         <tr>
-                            <th>ジャンル</th>
+                            <th>種類</th>
                             <th>名前</th>
                             <th>金額</th>
                             <th>数</th>
@@ -83,12 +83,12 @@
                     for (SpendingBlock sb : sList) {
                 %>
                 <div class="panel-body">
-                    <h3><%=sb.getPlace()%></h3>
+                    <h3>店名 ： <%=sb.getPlace()%></h3>
                 </div>
-                <table class="table table-bordered table-striped" style=" padding-bottom: 20px;">
+                <table class="table table-bordered table-striped">
                     <thead>
                         <tr>
-                            <th>ジャンル</th>
+                            <th>種類</th>
                             <th>名前</th>
                             <th>金額</th>
                             <th>数</th>

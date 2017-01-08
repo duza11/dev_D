@@ -11,13 +11,15 @@ import java.math.BigInteger;
 public class UserManager {
 
     private Statement st = null;
+    private PreparedStatement ps = null;
     private ResultSet rs = null;
+    private DatabaseConnector dc = null;
 
     /**
      * コンストラクタ データベース名，パスワードテーブル名，DBのログイン名 DBログインパスワード名を引数にとる
      */
     public UserManager(DatabaseConnector dc) {
-        st = dc.getStatement();
+        this.dc = dc;
     }
 
     /**
@@ -26,8 +28,11 @@ public class UserManager {
      */
     public boolean authenticate(String username, String password) throws Exception {
         boolean ret = false;
-        String sql = "select * from users where username='" + username + "'";
-        rs = st.executeQuery(sql);
+        String sql = "select * from users where username = ?";
+        dc.openConnection(sql);
+        ps = dc.getPreparedStatement();
+        ps.setString(1, username);
+        rs = ps.executeQuery();
 
         if (!rs.next()) {
             return false; // 指定されたユーザ名が存在しない
@@ -49,8 +54,11 @@ public class UserManager {
      * 新規ユーザの登録を行う． 既に同名のユーザが登録されているときはfalseを ，登録が成功した場合はtrueを返す
      */
     public boolean registration(String username, String password) throws Exception {
-        String sql = "select password from users where username='" + username + "'";
-        rs = st.executeQuery(sql);
+        String sql = "select password from users where username= ? ";
+        dc.openConnection(sql);
+        ps = dc.getPreparedStatement();
+        ps.setString(1, username);
+        rs = ps.executeQuery();
 
         if (rs.next()) {
             return false;
@@ -58,20 +66,37 @@ public class UserManager {
         rs.close();
 
         String md5pass = md5(password);
-        sql = "insert into users (username, password) values ('" + username + "', '" + md5pass + "')";
-
-        st.executeUpdate(sql);
+        sql = "insert into users (username, password) values (?, ?)";
+        dc.openConnection(sql);
+        ps = dc.getPreparedStatement();
+        ps.setString(1, username);
+        ps.setString(2, md5pass);
+        ps.executeUpdate();
+        
         return true;
     }
 
     public void withdraw(int userId) throws Exception {
-        String sql = "delete from users where user_id='" + userId + "'";
-        st.executeUpdate(sql);
+        //String sql = "delete from users where user_id='" + userId + "'";
+        String sql = "delete u, rb, ri, sb, si "
+                + "from ((((users u left join revenue_block rb on u.user_id = rb.user_id) "
+                + "left join revenue_item ri on rb.block_id = ri.block_id) "
+                + "left join spending_block sb on u.user_id = sb.user_id) "
+                + "left join spending_item si on sb.block_id = si.block_id) "
+                + "where u.user_id = ?;";
+        dc.openConnection(sql);
+        ps = dc.getPreparedStatement();
+        ps.setInt(1, userId);
+        
+        ps.executeUpdate();
     }
     
     public User getUser(String userName) throws Exception {
-        String sql = "select user_id, username from users where username='" + userName + "'";
-        rs = st.executeQuery(sql);
+        String sql = "select user_id, username from users where username= ?";
+        dc.openConnection(sql);
+        ps = dc.getPreparedStatement();
+        ps.setString(1, userName);
+        rs = ps.executeQuery();
         
         if(rs.next()) {
             User user = new User();

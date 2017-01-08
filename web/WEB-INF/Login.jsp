@@ -38,7 +38,7 @@
             </div>
 
             <div class="row">
-                <div class="col-xs-6 col-xs-offset-3">
+                <div class="col-sm-6 col-sm-offset-3">
                     <div class="panel bg-black bg-semitrans ft-white">
                         <div class="panel-body">
                             <h1 class="text-center">ログイン</h1>
@@ -68,11 +68,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xs-3"></div>
+                <div class="col-sm-3"></div>
             </div>
 
             <div class="row">
-                <div class="col-xs-6 col-xs-offset-3">
+                <div class="col-sm-6 col-sm-offset-3">
                     <div class="panel bg-black bg-semitrans ft-white">
                         <div class="panel-body">
                             <h1 class="text-center">新規登録</h1>
@@ -82,7 +82,7 @@
                                         ユーザ名
                                     </label>
                                     <div class="col-xs-8">
-                                        <input class="form-control" type="text" name="uname" required pattern="^([a-zA-Z0-9]{6,})$" title="英数字6文字以上で入力してください。" placeholder="ユーザ名">
+                                        <input class="form-control" type="text" name="uname" required pattern="^([a-zA-Z0-9]{6,})$" title="半角英数字で6文字以上入力してください。" placeholder="ユーザ名">
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -90,7 +90,7 @@
                                         パスワード
                                     </label>
                                     <div class="col-xs-8">
-                                        <input class="form-control" type="password" name="pass" required  pattern="^([a-zA-Z0-9]{6,})$" title="英数字6文字以上で入力してください。"placeholder="パスワード">
+                                        <input class="form-control" type="password" name="pass" required  pattern="^([a-zA-Z0-9]{6,})$" title="半角英数字で6文字以上入力してください。"placeholder="パスワード">
                                     </div>
                                 </div>
                                 <div class="form-group">

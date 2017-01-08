@@ -112,15 +112,15 @@
                         <div class="modal-body">
                             <div class="form-group">
                                 <label class="control-label">ユーザ名</label>
-                                <input type="text" name="uname" class="form-control" placeholder="ユーザ名" pattern="^([a-zA-Z0-9]{6,})$" title="英数字6文字以上で入力してください。" required>
+                                <input type="text" name="uname" class="form-control" placeholder="ユーザ名" pattern="^([a-zA-Z0-9]{6,})$" title="半角英数字で6文字以上入力してください。" required>
                             </div>
                             <div class="form-group">
                                 <label class="control-label">パスワード</label>
-                                <input type="password" name="pass" class="form-control" placeholder="パスワード" pattern="^([a-zA-Z0-9]{6,})$" title="英数字6文字以上で入力してください。" required>
+                                <input type="password" name="pass" class="form-control" placeholder="パスワード" pattern="^([a-zA-Z0-9]{6,})$" title="半角英数字で6文字以上入力してください。" required>
                             </div>
                             <div class="form-group">
                                 <label class="control-label">パスワード（確認）</label>
-                                <input type="password" name="pass2" class="form-control" placeholder="パスワード（確認）" pattern="^([a-zA-Z0-9]{6,})$" title="英数字6文字以上で入力してください。" required>
+                                <input type="password" name="pass2" class="form-control" placeholder="パスワード（確認）" pattern="^([a-zA-Z0-9]{6,})$" title="半角英数字で6文字以上入力してください。" required>
                             </div>
                             <div class="form-group">
                             </div>
