@@ -1,31 +1,38 @@
 $(function () {
+    var click_flg = true;
     var frm_cnt = 0;
 
     $(document).on('click', '.add', function () {
-        var original = $('#form_block\\[' + frm_cnt + '\\]');
+        if (click_flg) {
+            click_flg = false;
+            var original = $('#form_block\\[' + frm_cnt + '\\]');
 
-        frm_cnt++;
+            frm_cnt++;
 
-        original
-                .clone()
-                .hide()
-                .insertAfter(original)
-                .attr('id', 'form_block[' + frm_cnt + ']') // クローンのid属性を変更。
-                .end() // 一度適用する
-                .find('input, select').each(function (idx, obj) {
-            $(obj).attr({
-                id: $(obj).attr('id').replace(/\[[0-9]+\]$/, '[' + frm_cnt + ']'),
-                name: $(obj).attr('name').replace(/\[[0-9]+\]$/, '[' + frm_cnt + ']')
+            original
+                    .clone()
+                    .hide()
+                    .insertAfter(original)
+                    .attr('id', 'form_block[' + frm_cnt + ']') // クローンのid属性を変更。
+                    .end() // 一度適用する
+                    .find('input, select').each(function (idx, obj) {
+                $(obj).attr({
+                    id: $(obj).attr('id').replace(/\[[0-9]+\]$/, '[' + frm_cnt + ']'),
+                    name: $(obj).attr('name').replace(/\[[0-9]+\]$/, '[' + frm_cnt + ']')
+                });
+                if ($(obj).attr('type') == 'text' || $(obj).attr('type') == 'number') {
+                    $(obj).val('');
+                }
             });
-            if ($(obj).attr('type') == 'text' || $(obj).attr('type') == 'number') {
-                $(obj).val('');
-            }
-        });
 
-        // clone取得
-        var clone = $('#form_block\\[' + frm_cnt + '\\]');
-        clone.find('.clone-close').children('div.close-btn').show();
-        clone.slideDown('slow');
+            // clone取得
+            var clone = $('#form_block\\[' + frm_cnt + '\\]');
+            clone.find('.ac-btn').children('div.add-btn').hide();
+            clone.find('.ac-btn').children('div.close-btn').show();
+            clone.slideDown('fast', function () {
+                click_flg = true;
+            });
+        }
     });
 
     $(document).on('click', '.close-btn', function () {

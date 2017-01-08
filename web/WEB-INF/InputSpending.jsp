@@ -30,7 +30,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-3">
-                                    <input class="form-control" type="date" name="date" pattern="\d{4}-(0?[1-9]|1[0-2])-\d{1,2}" title="日付を入力してください" required>
+                                    <input class="form-control" type="date" name="date" pattern="\d{4}-(0?[1-9]|1[0-2])-\d{1,2}" title="yyyy-MM-ddの形式で日付を入力してください" placeholder="日付（yyyy-MM-dd）" required>
                                 </div>
                             </div>
                         </div>
@@ -40,7 +40,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-3">
-                                    <input class="form-control" type="text" name="place" required>
+                                    <input class="form-control" type="text" name="place" placeholder="店名" required>
                                 </div>
                             </div>
                         </div>
@@ -64,23 +64,23 @@
                                         </select>
                                     </div>
                                     <div class="col-md-2 col-xs-3">
-                                        <input class="form-control" type="text" name="item_name[0]" id="item_name[0]" required>
+                                        <input class="form-control" type="text" name="item_name[0]" id="item_name[0]" placeholder="名前">
                                     </div>
                                     <div class="col-md-2 col-xs-3">
-                                        <input class="form-control" type="number" name="price[0]" id="price[0]" min="0" required>
+                                        <input class="form-control" type="number" name="price[0]" id="price[0]" min="0" placeholder="金額" required>
                                     </div>
                                     <div class="col-md-2 col-xs-2">
-                                        <input class="form-control" type="number" name="count[0]" id="count[0]" min="1" required>
+                                        <input class="form-control" type="number" name="count[0]" id="count[0]" min="1" placeholder="数" required>
                                     </div>
-                                    <div class="clone-close col-md-1 col-xs-1">
-                                        <div class="close-btn" title="Close"><button type="button" class="btn btn-primary">-</button></div>
+                                    <div class="ac-btn col-md-1 col-xs-1">
+                                        <div class="add-btn" title="Add"><button class="add btn btn-default" type="button">+</button></div>
+                                        <div class="close-btn" title="Close"><button class="btn btn-default" type="button">-</button></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <button class="btn btn-primary" type="submit">送信</button>
-                        <button class="btn btn-primary" type="reset">リセット</button>
-                        <button class="add btn btn-primary" type="button">+</button>
+                        <button class="btn btn-default" type="reset">リセット</button>
                     </form>
                 </div>
             </div>
