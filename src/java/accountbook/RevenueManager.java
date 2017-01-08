@@ -439,6 +439,7 @@ public class RevenueManager {
         int counter = 0;
         while (true) {
             RevenueBlock rb = new RevenueBlock();
+            rb.setBlockId(rs.getInt("block_id"));
             rb.setDate(rs.getString("date"));
             rb.setPlace(rs.getString("place"));
             List<RevenueItem> rIList = new ArrayList<>();
@@ -461,5 +462,52 @@ public class RevenueManager {
                 revenueBlockList.add(rb);
             }
         }
+    }
+
+    public RevenueBlock getRevenueBlock(int userId, int blockId) throws Exception {
+        String sql = "select * from users u, revenue_block rb, revenue_item ri "
+                + "where u.user_id = rb.user_id and rb.block_id = ri.block_id "
+                + "and u.user_id = ? and rb.block_id = ?;";
+        dc.openConnection(sql);
+        ps = dc.getPreparedStatement();
+        ps.setInt(1, userId);
+        ps.setInt(2, blockId);
+        rs = ps.executeQuery();
+        
+        RevenueBlock rb = new RevenueBlock();
+        List<RevenueItem> riList = new ArrayList<>();
+        
+        while (rs.next()) {
+            rb.setBlockId(rs.getInt("rb.block_id"));
+            rb.setDate(rs.getString("date"));
+            rb.setPlace(rs.getString("place"));
+            RevenueItem ri = new RevenueItem();
+            ri.setItemName(rs.getString("item_name"));
+            ri.setKindId(rs.getInt("kind_id"));
+            ri.setPrice(rs.getInt("price"));
+            ri.setCount(rs.getInt("count"));
+            riList.add(ri);
+        }
+        
+        if (riList.isEmpty()) {
+            return null;
+        }
+        rb.setRevenueItemList(riList);
+        return rb;
+    }
+
+    public boolean deleteRevenue(int userId, int blockId) throws Exception {
+        String sql = "delete rb, ri from "
+                + "((users u left join revenue_block rb on u.user_id = rb.user_id) "
+                + "left join revenue_item ri on rb.block_id = ri.block_id) "
+                + "where u.user_id = ? and rb.block_id = ?";
+        dc.openConnection(sql);
+        ps = dc.getPreparedStatement();
+        ps.setInt(1, userId);
+        ps.setInt(2, blockId);
+        if (ps.executeUpdate() == 0) {
+            return false;
+        }
+        return true;
     }
 }

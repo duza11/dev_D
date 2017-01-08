@@ -435,6 +435,7 @@ public class SpendingManager {
         int counter = 0;
         while (true) {
             SpendingBlock sb = new SpendingBlock();
+            sb.setBlockId(rs.getInt("block_id"));
             sb.setDate(rs.getString("date"));
             sb.setPlace(rs.getString("place"));
             List<SpendingItem> sIList = new ArrayList<>();
@@ -457,5 +458,52 @@ public class SpendingManager {
                 spendingBlockList.add(sb);
             }
         }
+    }
+
+    public SpendingBlock getSpendingBlock(int userId, int blockId) throws Exception {
+        String sql = "select * from users u, spending_block sb, spending_item si "
+                + "where u.user_id = sb.user_id and sb.block_id = si.block_id "
+                + "and u.user_id = ? and sb.block_id = ?;";
+        dc.openConnection(sql);
+        ps = dc.getPreparedStatement();
+        ps.setInt(1, userId);
+        ps.setInt(2, blockId);
+        rs = ps.executeQuery();
+        
+        SpendingBlock sb = new SpendingBlock();
+        List<SpendingItem> siList = new ArrayList<>();
+        
+        while (rs.next()) {
+            sb.setBlockId(rs.getInt("sb.block_id"));
+            sb.setDate(rs.getString("date"));
+            sb.setPlace(rs.getString("place"));
+            SpendingItem si = new SpendingItem();
+            si.setItemName(rs.getString("item_name"));
+            si.setKindId(rs.getInt("kind_id"));
+            si.setPrice(rs.getInt("price"));
+            si.setCount(rs.getInt("count"));
+            siList.add(si);
+        }
+        
+        if (siList.isEmpty()) {
+            return null;
+        }
+        sb.setSpendingItemList(siList);
+        return sb;
+    }
+
+    public boolean deleteSpending(int userId, int blockId) throws Exception {
+        String sql = "delete sb, si from "
+                + "((users u left join spending_block sb on u.user_id = sb.user_id) "
+                + "left join spending_item si on sb.block_id = si.block_id) "
+                + "where u.user_id = ? and sb.block_id = ?";
+        dc.openConnection(sql);
+        ps = dc.getPreparedStatement();
+        ps.setInt(1, userId);
+        ps.setInt(2, blockId);
+        if (ps.executeUpdate() == 0) {
+            return false;
+        }
+        return true;
     }
 }

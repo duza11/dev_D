@@ -30,6 +30,11 @@ public class AccountBookServlet extends HttpServlet {
     private static String INPUT_REVENUE_JSP = "/WEB-INF/InputRevenue.jsp";
     // 支出の入力のビューを担当
     private static String INPUT_SPENDING_JSP = "/WEB-INF/InputSpending.jsp";
+
+    private static String INPUT_REVENUE_UPDATE_JSP = "WEB-INF/InputRevenueUpdate.jsp";
+
+    private static String INPUT_SPENDING_UPDATE_JSP = "WEB-INF/InputSpendingUpdate.jsp";
+
     // 収入の円グラフのビューを担当
     private static String SHOW_MONTHLY_PIE_CHART_JSP = "/WEB-INF/ShowMonthlyPieChart.jsp";
     // 棒グラフのビューを担当
@@ -161,12 +166,34 @@ public class AccountBookServlet extends HttpServlet {
             } else if (action.equals("input_spe")) {
                 setSpendingItemKindMap(sm, req);
                 nextView = INPUT_SPENDING_JSP;
+            } else if (action.equals("input_rev_u")) {
+                setRevenueItemKindMap(rm, req);
+                nextView = getRevenueBlock(user, rm, sm, req);
+            } else if (action.equals("input_spe_u")) {
+                setSpendingItemKindMap(sm, req);
+                nextView = getSpendingBlock(user, rm, sm, req);
             } else if (action.equals("register_rev")) {
                 registerRevenue(user, rm, req);
                 setDateArray(rm, sm, user, req);
                 nextView = SHOW_CALENDAR_JSP;
             } else if (action.equals("register_spe")) {
                 registerSpending(user, sm, req);
+                setDateArray(rm, sm, user, req);
+                nextView = SHOW_CALENDAR_JSP;
+            } else if (action.equals("update_rev")) {
+                updateRevenue(user, rm, req);
+                setDateArray(rm, sm, user, req);
+                nextView = SHOW_CALENDAR_JSP;
+            } else if (action.equals("update_spe")) {
+                updateSpending(user, sm, req);
+                setDateArray(rm, sm, user, req);
+                nextView = SHOW_CALENDAR_JSP;
+            } else if (action.equals("delete_rev")) {
+                deleteRevenue(user, rm, req);
+                setDateArray(rm, sm, user, req);
+                nextView = SHOW_CALENDAR_JSP;
+            } else if (action.equals("delete_spe")) {
+                deleteSpending(user, sm, req);
                 setDateArray(rm, sm, user, req);
                 nextView = SHOW_CALENDAR_JSP;
             } else if (action.equals("withdraw")) {
@@ -195,7 +222,19 @@ public class AccountBookServlet extends HttpServlet {
             // 問題が発生した際に参考にすると良い
             e.printStackTrace();
             req.setAttribute("error", "例外が発生しました:" + e.toString());
-            nextView = LOGIN_JSP;
+            User user = (User) req.getSession(true).getAttribute("user");
+            if (user == null) {
+                nextView = LOGIN_JSP;
+            } else {
+                try {
+                    setDateArray(rm, sm, user, req);
+                    nextView = SHOW_CALENDAR_JSP;
+                } catch(Exception ex) {
+                    req.getSession(true).invalidate();
+                    e.printStackTrace();
+                    nextView = LOGIN_JSP;
+                }
+            }
         } finally {
             /*
 	     * 正常に処理された場合も，エラーの場合もビューとして指定されたJSP
@@ -412,7 +451,7 @@ public class AccountBookServlet extends HttpServlet {
         }
         rb.setDate(req.getParameter("date"));
         rb.setPlace(req.getParameter("place"));
-        
+
         List<RevenueItem> revenueItemList = new ArrayList<RevenueItem>();
 
         for (int i = 0; req.getParameter("kind[" + i + "]") != null; i++) {
@@ -601,6 +640,68 @@ public class AccountBookServlet extends HttpServlet {
         req.setAttribute("rList", rList);
         req.setAttribute("sList", sList);
         return SHOW_DAILY_DATA_JSP;
+    }
+
+    private String getRevenueBlock(User user, RevenueManager rm, SpendingManager sm, HttpServletRequest req) throws Exception {
+        int blockId = Integer.parseInt(req.getParameter("block_id"));
+        RevenueBlock rb = rm.getRevenueBlock(user.getUserId(), blockId);
+
+        if (rb == null) {
+            req.setAttribute("error", "不正なパラメータです");
+            setDateArray(rm, sm, user, req);
+            return SHOW_CALENDAR_JSP;
+        }
+
+        req.setAttribute("rb", rb);
+        return INPUT_REVENUE_UPDATE_JSP;
+    }
+
+    private String getSpendingBlock(User user, RevenueManager rm, SpendingManager sm, HttpServletRequest req) throws Exception {
+        int blockId = Integer.parseInt(req.getParameter("block_id"));
+        SpendingBlock sb = sm.getSpendingBlock(user.getUserId(), blockId);
+
+        if (sb == null) {
+            req.setAttribute("error", "不正なパラメータです");
+            setDateArray(rm, sm, user, req);
+            return SHOW_CALENDAR_JSP;
+        }
+
+        req.setAttribute("sb", sb);
+        return INPUT_SPENDING_UPDATE_JSP;
+    }
+
+    private boolean deleteRevenue(User user, RevenueManager rm, HttpServletRequest req) throws Exception {
+        int blockId = Integer.parseInt(req.getParameter("block_id"));
+        if (rm.deleteRevenue(user.getUserId(), blockId)) {
+            req.setAttribute("success", "削除が完了しました");
+            return true;
+        }
+        req.setAttribute("error", "不正な操作です");
+        return false;
+    }
+
+    private boolean deleteSpending(User user, SpendingManager sm, HttpServletRequest req) throws Exception {
+        int blockId = Integer.parseInt(req.getParameter("block_id"));
+        if (sm.deleteSpending(user.getUserId(), blockId)) {
+            req.setAttribute("success", "削除が完了しました");
+            return true;
+        }
+        req.setAttribute("error", "不正な操作です");
+        return false;
+    }
+
+    private void updateRevenue(User user, RevenueManager rm, HttpServletRequest req) throws Exception {
+        if (deleteRevenue(user, rm, req)) {
+            registerRevenue(user, rm, req);
+            req.setAttribute("success", "更新が完了しました");
+        }
+    }
+
+    private void updateSpending(User user, SpendingManager sm, HttpServletRequest req) throws Exception {
+        if (deleteSpending(user, sm, req)) {
+            registerSpending(user, sm, req);
+            req.setAttribute("success", "更新が完了しました");
+        }
     }
 
     private boolean isDate(String date, String... formats) {

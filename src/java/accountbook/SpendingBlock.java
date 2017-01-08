@@ -7,6 +7,7 @@ import java.util.List;
 
 public class SpendingBlock {
     private List<SpendingItem> spendingItemList = new ArrayList<SpendingItem>();
+    private int blockId;
     private Date date;
     private String place;
 
@@ -32,5 +33,13 @@ public class SpendingBlock {
 
     public void setPlace(String place) {
         this.place = place;
+    }
+
+    public int getBlockId() {
+        return blockId;
+    }
+
+    public void setBlockId(int blockId) {
+        this.blockId = blockId;
     }
 }

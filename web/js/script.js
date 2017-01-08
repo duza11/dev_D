@@ -2,6 +2,12 @@ $(function () {
     var click_flg = true;
     var frm_cnt = 0;
 
+    $(".form-block[id^='form_block']").each(function (idx, obj) {
+        if ($(obj).attr('id') != 'form_block[0]') {
+            frm_cnt++;
+        }
+    });
+
     $(document).on('click', '.add', function () {
         if (click_flg) {
             click_flg = false;

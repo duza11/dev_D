@@ -34,39 +34,68 @@
 
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    収入
+                    <p class="panel-title">収入</p>
                 </div>
                 <%
-                    for (RevenueBlock rb : rList) {
+                    for (int i = 0; i < rList.size(); i++) {
+                        RevenueBlock rb = rList.get(i);
                 %>
-                <div class="panel-body">
-                    <h3>店名 ： <%=rb.getPlace()%></h3>
+                <div id="deleteRevenueModal-<%=i%>" class="modal fade">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                <h4>収入データの削除</h4>
+                            </div>
+                            <div class="modal-body">
+                                <p class="text-center">削除したデータは復元できませんがよろしいですか？</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">キャンセル</button>
+                                <a class="btn btn-primary" href="?action=delete_rev&block_id=<%=rb.getBlockId()%>">削除</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <table class="table table-bordered table-striped">
-                    <thead>
-                        <tr>
-                            <th>種類</th>
-                            <th>名前</th>
-                            <th>金額</th>
-                            <th>数</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <%
-                            for (RevenueItem ri : rb.getRevenueItemList()) {
-                                rSum += ri.getPrice() * ri.getCount();
-                        %>
-                        <tr>
-                            <td><%=ri.getKindName()%></td>
-                            <td><%=ri.getItemName()%></td>
-                            <td><%=ri.getPrice()%></td>
-                            <td><%=ri.getCount()%></td>
-                            <%
-                                }
-                            %>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="panel-body">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <p class="panel-title pull-left">
+                                店名 ： <%=rb.getPlace()%>
+                            </p>
+                            <div class="pull-right">
+                                <a class="btn btn-default" href="?action=input_rev_u&block_id=<%=rb.getBlockId()%>">編集</a>
+                                <a class="btn btn-default" href="#deleteRevenueModal-<%=i%>" data-toggle="modal" data-target="#deleteRevenueModal-<%=i%>">削除</a>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>種類</th>
+                                    <th>名前</th>
+                                    <th>金額</th>
+                                    <th>数</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <%
+                                    for (RevenueItem ri : rb.getRevenueItemList()) {
+                                        rSum += ri.getPrice() * ri.getCount();
+                                %>
+                                <tr>
+                                    <td><%=ri.getKindName()%></td>
+                                    <td><%=ri.getItemName()%></td>
+                                    <td><%=ri.getPrice()%></td>
+                                    <td><%=ri.getCount()%></td>
+                                    <%
+                                        }
+                                    %>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
                 <%
                     }
                 %>
@@ -77,39 +106,68 @@
 
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    支出
+                    <p class="panel-title">支出</p>
                 </div>
                 <%
-                    for (SpendingBlock sb : sList) {
+                    for (int i = 0; i < sList.size(); i++) {
+                        SpendingBlock sb = sList.get(i);
                 %>
-                <div class="panel-body">
-                    <h3>店名 ： <%=sb.getPlace()%></h3>
+                <div id="deleteSpendingModal-<%=i%>" class="modal fade">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                <h4>支出データの削除</h4>
+                            </div>
+                            <div class="modal-body">
+                                <p class="text-center">削除したデータは復元できませんがよろしいですか？</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">キャンセル</button>
+                                <a class="btn btn-primary" href="?action=delete_spe&block_id=<%=sb.getBlockId()%>">削除</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <table class="table table-bordered table-striped">
-                    <thead>
-                        <tr>
-                            <th>種類</th>
-                            <th>名前</th>
-                            <th>金額</th>
-                            <th>数</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <%
-                            for (SpendingItem si : sb.getSpendingItemList()) {
-                                sSum += si.getPrice() * si.getCount();
-                        %>
-                        <tr>
-                            <td><%=si.getKindName()%></td>
-                            <td><%=si.getItemName()%></td>
-                            <td><%=si.getPrice()%></td>
-                            <td><%=si.getCount()%></td>
-                            <%
-                                }
-                            %>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="panel-body">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <p class="panel-title pull-left">
+                                店名 ： <%=sb.getPlace()%>
+                            </p>
+                            <div class="pull-right">
+                                <a class="btn btn-default" href="?action=input_spe_u&block_id=<%=sb.getBlockId()%>">編集</a>
+                                <a class="btn btn-default" href="#deleteSpendingModal-<%=i%>" data-toggle="modal" data-target="#deleteSpendingModal-<%=i%>">削除</a>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>種類</th>
+                                    <th>名前</th>
+                                    <th>金額</th>
+                                    <th>数</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <%
+                                    for (SpendingItem si : sb.getSpendingItemList()) {
+                                        sSum += si.getPrice() * si.getCount();
+                                %>
+                                <tr>
+                                    <td><%=si.getKindName()%></td>
+                                    <td><%=si.getItemName()%></td>
+                                    <td><%=si.getPrice()%></td>
+                                    <td><%=si.getCount()%></td>
+                                    <%
+                                        }
+                                    %>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
                 <%
                     }
                 %>

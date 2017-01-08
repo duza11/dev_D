@@ -52,82 +52,89 @@
                 </div>
                 <% }%>
             </div>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>合計収入額</th>
-                        <th>合計支出額</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><%=rSum%></td>
-                        <td><%=sSum%></td>
-                    </tr>
-                </tbody>
-            </table>
-            <table class="calendar">
-                <tr>
-                    <td class="text-center"><a href="?action=show_calendar&year=<%=previousYear%>&month=<%=previousMonth%>">前月</a></td>
-                    <td colspan="5" class="text-center"><%=abc.getYear()%>年<%=abc.getMonth() + 1%>月</td>
-                    <td class="text-center"><a href="?action=show_calendar&year=<%=nextYear%>&month=<%=nextMonth%>">翌月</a></td>
-                </tr>
-                <tr><td class="week">日</td><td class="week">月</td><td class="week">火</td><td class="week">水</td><td class="week">木</td><td class="week">金</td><td class="week">土</td></tr>
-                <%
-                    for (int i = 0; i < abc.getDayList().size() / 7; i++) {
-                %>
-                <tr>
-                    <%
-                        for (int j = i * 7; j < i * 7 + 7; j++) {
-                            if (abc.getDayList().get(j).getDay() > 35) {
-                    %>
-                    <td class="otherday"><%=abc.getDayList().get(j).getDay() - 35%>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <p class="panel-title pull-left"><%=abc.getYear()%>年<%=abc.getMonth() + 1%>月</p>
+                    <div class="pull-right">
+                        <a class="btn btn-default" href="?action=show_calendar&year=<%=previousYear%>&month=<%=previousMonth%>">前月</a>
+                        <a class="btn btn-default" href="?action=show_calendar&year=<%=nextYear%>&month=<%=nextMonth%>">翌月</a>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>合計収入額</th>
+                                <th>合計支出額</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><%=rSum%></td>
+                                <td><%=sSum%></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="calendar">
+                        <tr><td class="week">日</td><td class="week">月</td><td class="week">火</td><td class="week">水</td><td class="week">木</td><td class="week">金</td><td class="week">土</td></tr>
                         <%
-                        } else {
+                            for (int i = 0; i < abc.getDayList().size() / 7; i++) {
                         %>
-                    <td class="day">
-                        <a href="?action=show_daily&date=<%=abc.getYear()%>-<%=abc.getMonth() + 1%>-<%=abc.getDayList().get(j).getDay()%>">
-                            <%=abc.getDayList().get(j).getDay()%>
-                        </a>
+                        <tr>
+                            <%
+                                for (int j = i * 7; j < i * 7 + 7; j++) {
+                                    if (abc.getDayList().get(j).getDay() > 35) {
+                            %>
+                            <td class="otherday"><%=abc.getDayList().get(j).getDay() - 35%>
+                                <%
+                                } else {
+                                %>
+                            <td class="day">
+                                <a href="?action=show_daily&date=<%=abc.getYear()%>-<%=abc.getMonth() + 1%>-<%=abc.getDayList().get(j).getDay()%>">
+                                    <%=abc.getDayList().get(j).getDay()%>
+                                </a>
+                                <%
+                                    }
+                                %>
+                            </td>
+                            <%
+                                }
+                            %>
+                        </tr>
+                        <tr>
+                            <%
+                                for (int j = i * 7; j < i * 7 + 7; j++) {
+                                    if (abc.getDayList().get(j).getDay() > 35) {
+                            %>
+                            <td class="sche"></td>
+                            <%
+                            } else {
+                            %>
+                            <td class="sche">
+                                <%
+                                    if (abc.getDayList().get(j).getRevenue() != -1) {
+                                %>
+                                <div class="ft-green"><%=abc.getDayList().get(j).getRevenue()%></div>
+                                <%
+                                    }
+                                    if (abc.getDayList().get(j).getSpending() != -1) {
+                                %>
+                                <div class="ft-red"><%=abc.getDayList().get(j).getSpending()%></div>
+                                <%
+                                    }
+                                %>
+                            </td>
+                            <%                        }
+                                }
+                            %>
+                        </tr>
                         <%
                             }
                         %>
-                    </td>
-                    <%
-                        }
-                    %>
-                </tr>
-                <tr>
-                    <%
-                        for (int j = i * 7; j < i * 7 + 7; j++) {
-                            if (abc.getDayList().get(j).getDay() > 35) {
-                    %>
-                    <td class="sche"></td>
-                    <%
-                    } else {
-                    %>
-                    <td class="sche">
-                        <%
-                            if (abc.getDayList().get(j).getRevenue() != -1) {
-                        %>
-                        <div class="ft-green"><%=abc.getDayList().get(j).getRevenue()%></div>
-                        <%
-                            }
-                            if (abc.getDayList().get(j).getSpending() != -1) {
-                        %>
-                        <div class="ft-red"><%=abc.getDayList().get(j).getSpending()%></div>
-                        <%
-                            }
-                        %>
-                    </td>
-                    <%                        }
-                        }
-                    %>
-                </tr>
-                <%
-                    }
-                %>
-            </table>
+                    </table>
+                </div>
+            </div>
         </div>
         <script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
         <script src="js/script.js"></script>
