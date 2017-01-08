@@ -2,6 +2,7 @@
 import accountbook.*;
 import java.awt.Color;
 import java.io.*;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import javax.servlet.*;
@@ -37,7 +38,7 @@ public class AccountBookServlet extends HttpServlet {
     private static String SHOW_YEARLY_BAR_CHART_JSP = "/WEB-INF/ShowYearlyBarChart.jsp";
 
     private static String SHOW_YEARLY_PIE_CHART_JSP = "/WEB-INF/ShowYearlyPieChart.jsp";
-    
+
     private static String SHOW_DAILY_DATA_JSP = "/WEB-INF/ShowDailyData.jsp";
 
     /**
@@ -137,17 +138,17 @@ public class AccountBookServlet extends HttpServlet {
                 // 商品一覧を表示
 //                    nextView = showItems(im, req);
             } else if (action.equals("show_monthly_rev_pie")) {
-                nextView = createPieChart(user, rm, sm, req);
+                nextView = createMonthlyPieChart(user, rm, sm, req);
             } else if (action.equals("show_monthly_spe_pie")) {
-                nextView = createPieChart(user, rm, sm, req);
+                nextView = createMonthlyPieChart(user, rm, sm, req);
             } else if (action.equals("show_yearly_rev_pie")) {
                 nextView = createYearlyPieChart(user, rm, sm, req);
             } else if (action.equals("show_yearly_spe_pie")) {
                 nextView = createYearlyPieChart(user, rm, sm, req);
             } else if (action.equals("show_monthly_rev_bar")) {
-                nextView = createBarChart(user, rm, sm, req);
+                nextView = createMonthlyBarChart(user, rm, sm, req);
             } else if (action.equals("show_monthly_spe_bar")) {
-                nextView = createBarChart(user, rm, sm, req);
+                nextView = createMonthlyBarChart(user, rm, sm, req);
             } else if (action.equals("show_yearly_rev_bar")) {
                 createYearlyBarChart(user, rm, sm, req);
                 nextView = SHOW_YEARLY_BAR_CHART_JSP;
@@ -171,8 +172,7 @@ public class AccountBookServlet extends HttpServlet {
             } else if (action.equals("withdraw")) {
                 nextView = withdraw(user, um, req);
             } else if (action.equals("show_daily")) {
-                setDailyData(rm, sm, user, req);
-                nextView = SHOW_DAILY_DATA_JSP;
+                nextView = setDailyData(rm, sm, user, req);
             } else {
 
                 // 要求に該当する処理が無い場合
@@ -183,7 +183,7 @@ public class AccountBookServlet extends HttpServlet {
                 // actionパラメータの指定が無い，または不明な処理が要求された場合
                 req.setAttribute("error", "不正なアクションが要求されました("
                         + req.getParameter("action") + ")");
-                
+
                 setDateArray(rm, sm, user, req);
                 nextView = SHOW_CALENDAR_JSP;
             }
@@ -292,7 +292,7 @@ public class AccountBookServlet extends HttpServlet {
         String param = req.getParameter("year");
         if (!isValid(param)) {
             year = -999;
-        } else if (!param.matches("\\d+")) {
+        } else if (!isDate(param, "yyyy")) {
             year = -999;
             req.setAttribute("error", "不正なパラメータです");
         } else {
@@ -306,7 +306,7 @@ public class AccountBookServlet extends HttpServlet {
         param = req.getParameter("month");
         if (!isValid(param)) {
             month = -999;
-        } else if (!param.matches("(0?[1-9]|1[0-2])")) {
+        } else if (!isDate(param, "MM", "M")) {
             month = -999;
             req.setAttribute("error", "不正なパラメータです");
         } else {
@@ -370,19 +370,32 @@ public class AccountBookServlet extends HttpServlet {
 
     private void registerSpending(User user, SpendingManager sm, HttpServletRequest req) throws Exception {
         SpendingBlock sb = new SpendingBlock();
+        if (!isDate(req.getParameter("date"), "yyyy-MM-dd", "yyyy-M-dd", "yyyy-MM-d", "yyyy-M-d")) {
+            req.setAttribute("error", "不正なパラメータです");
+            return;
+        }
+        sb.setDate(req.getParameter("date"));
+        sb.setPlace(req.getParameter("place"));
+
         List<SpendingItem> spendingItemList = new ArrayList<SpendingItem>();
 
         for (int i = 0; req.getParameter("kind[" + i + "]") != null; i++) {
+            String name = req.getParameter("item_name[" + i + "]");
+            String kind = req.getParameter("kind[" + i + "]");
+            String price = req.getParameter("price[" + i + "]");
+            String count = req.getParameter("count[" + i + "]");
+            if (!isValid(name) || !isValid(kind) || !isValid(price) || !isValid(count)) {
+                req.setAttribute("error", "不正なパラメータです");
+                return;
+            }
             SpendingItem si = new SpendingItem();
-            si.setItemName(req.getParameter("item_name[" + i + "]"));
-            si.setKindId(Integer.parseInt(req.getParameter("kind[" + i + "]")));
-            si.setPrice(Integer.parseInt(req.getParameter("price[" + i + "]")));
-            si.setCount(Integer.parseInt(req.getParameter("count[" + i + "]")));
+            si.setItemName(name);
+            si.setKindId(Integer.parseInt(kind));
+            si.setPrice(Integer.parseInt(price));
+            si.setCount(Integer.parseInt(count));
             spendingItemList.add(si);
         }
 
-        sb.setDate(req.getParameter("date"));
-        sb.setPlace(req.getParameter("place"));
         sb.setSpendingItemList(spendingItemList);
 
         sm.registerSpendingBlock(user, sb);
@@ -391,26 +404,39 @@ public class AccountBookServlet extends HttpServlet {
 
     private void registerRevenue(User user, RevenueManager rm, HttpServletRequest req) throws Exception {
         RevenueBlock rb = new RevenueBlock();
+        if (!isDate(req.getParameter("date"), "yyyy-MM-dd", "yyyy-M-dd", "yyyy-MM-d", "yyyy-M-d")) {
+            req.setAttribute("error", "不正なパラメータです");
+            return;
+        }
+        rb.setDate(req.getParameter("date"));
+        rb.setPlace(req.getParameter("place"));
+        
         List<RevenueItem> revenueItemList = new ArrayList<RevenueItem>();
 
         for (int i = 0; req.getParameter("kind[" + i + "]") != null; i++) {
+            String name = req.getParameter("item_name[" + i + "]");
+            String kind = req.getParameter("kind[" + i + "]");
+            String price = req.getParameter("price[" + i + "]");
+            String count = req.getParameter("count[" + i + "]");
+            if (!isValid(name) || !isValid(kind) || !isValid(price) || !isValid(count)) {
+                req.setAttribute("error", "不正なパラメータです");
+                return;
+            }
             RevenueItem ri = new RevenueItem();
-            ri.setItemName(req.getParameter("item_name[" + i + "]"));
-            ri.setKindId(Integer.parseInt(req.getParameter("kind[" + i + "]")));
-            ri.setPrice(Integer.parseInt(req.getParameter("price[" + i + "]")));
-            ri.setCount(Integer.parseInt(req.getParameter("count[" + i + "]")));
+            ri.setItemName(name);
+            ri.setKindId(Integer.parseInt(kind));
+            ri.setPrice(Integer.parseInt(price));
+            ri.setCount(Integer.parseInt(count));
             revenueItemList.add(ri);
         }
 
-        rb.setDate(req.getParameter("date"));
-        rb.setPlace(req.getParameter("place"));
         rb.setRevenueItemList(revenueItemList);
 
         rm.registerRevenueBlock(user, rb);
         req.setAttribute("success", "登録が完了しました");
     }
 
-    private String createPieChart(User user, RevenueManager rm, SpendingManager sm, HttpServletRequest req) throws Exception {
+    private String createMonthlyPieChart(User user, RevenueManager rm, SpendingManager sm, HttpServletRequest req) throws Exception {
         List<PieChartItem> pieChartItemList = null;
 
         String date = req.getParameter("date");
@@ -421,8 +447,10 @@ public class AccountBookServlet extends HttpServlet {
             date = sdf.format(d);
         }
 
-        if (!date.matches("\\d+-(0?[1-9]|1[0-2])")) {
-            return LOGIN_JSP;
+        if (!isDate(date, "yyyy-MM", "yyyy-M")) {
+            req.setAttribute("error", "不正なパラメータです");
+            setDateArray(rm, sm, user, req);
+            return SHOW_CALENDAR_JSP;
         }
 
         if (req.getParameter("action").equals("show_monthly_rev_pie")) {
@@ -466,8 +494,10 @@ public class AccountBookServlet extends HttpServlet {
             date = sdf.format(d);
         }
 
-        if (!date.matches("\\d+")) {
-            return LOGIN_JSP;
+        if (!isDate(date, "yyyy")) {
+            req.setAttribute("error", "不正なパラメータです");
+            setDateArray(rm, sm, user, req);
+            return SHOW_CALENDAR_JSP;
         }
 
         if (req.getParameter("action").equals("show_yearly_rev_pie")) {
@@ -500,7 +530,7 @@ public class AccountBookServlet extends HttpServlet {
         return SHOW_YEARLY_PIE_CHART_JSP;
     }
 
-    private String createBarChart(User user, RevenueManager rm, SpendingManager sm, HttpServletRequest req) throws Exception {
+    private String createMonthlyBarChart(User user, RevenueManager rm, SpendingManager sm, HttpServletRequest req) throws Exception {
         String date = req.getParameter("date");
 
         if (date == null) {
@@ -509,8 +539,11 @@ public class AccountBookServlet extends HttpServlet {
             date = sdf.format(d);
         }
 
-        if (!date.matches("\\d+-(0?[1-9]|1[0-2])")) {
-            return LOGIN_JSP;
+        // !date.matches("\\d+-(0?[1-9]|1[0-2])")
+        if (!isDate(date, "yyyy-MM", "yyyy-M")) {
+            req.setAttribute("error", "不正なパラメータです");
+            setDateArray(rm, sm, user, req);
+            return SHOW_CALENDAR_JSP;
         }
 
         Map<Integer, String> itemKindMap = null;
@@ -535,8 +568,10 @@ public class AccountBookServlet extends HttpServlet {
             date = sdf.format(d);
         }
 
-        if (!date.matches("\\d+")) {
-            return LOGIN_JSP;
+        if (!isDate(date, "yyyy")) {
+            req.setAttribute("error", "不正なパラメータです");
+            setDateArray(rm, sm, user, req);
+            return SHOW_CALENDAR_JSP;
         }
 
         Map<Integer, String> itemKindMap = null;
@@ -551,13 +586,35 @@ public class AccountBookServlet extends HttpServlet {
         req.setAttribute("category", itemKindMap);
         return SHOW_YEARLY_BAR_CHART_JSP;
     }
-    
-    private void setDailyData(RevenueManager rm, SpendingManager sm, User user, HttpServletRequest req) throws Exception {
+
+    private String setDailyData(RevenueManager rm, SpendingManager sm, User user, HttpServletRequest req) throws Exception {
         String date = req.getParameter("date");
+        if (!isDate(date, "yyyy-MM-dd", "yyyy-M-dd", "yyyy-MM-d", "yyyy-M-d")) {
+            req.setAttribute("error", "不正なパラメータです");
+            setDateArray(rm, sm, user, req);
+            return SHOW_CALENDAR_JSP;
+        }
         List<RevenueBlock> rList = rm.setDailyDataSet(user, date);
         List<SpendingBlock> sList = sm.setDailyDataSet(user, date);
         req.setAttribute("rList", rList);
         req.setAttribute("sList", sList);
+        return SHOW_DAILY_DATA_JSP;
+    }
+
+    private boolean isDate(String date, String... formats) {
+        for (String f : formats) {
+            try {
+                SimpleDateFormat d = new SimpleDateFormat(f);
+                d.setLenient(false);
+                Date result = d.parse(date);
+                if (date.equals(d.format(result))) {
+                    return true;
+                }
+            } catch (ParseException e) {
+                continue;
+            }
+        }
+        return false;
     }
 
     /**
