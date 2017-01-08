@@ -21,7 +21,12 @@
         <div class="container theme-showcase" role="main">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <p class="panel-title"><%=date%>年の<%=request.getParameter("action").equals("show_monthly_rev_bar") ? "収入" : "支出"%></p>
+                    <p class="panel-title pull-left"><%=date%>年の<%=request.getParameter("action").equals("show_monthly_rev_bar") ? "収入" : "支出"%></p>
+                    <div class="pull-right">
+                        <a class="btn btn-default" href="?action=<%=request.getParameter("action")%>&category=<%=request.getParameter("category")%>&date=<%=Integer.parseInt(date) - 1%>">前年</a>
+                        <a class="btn btn-default" href="?action=<%=request.getParameter("action")%>&category=<%=request.getParameter("category")%>&date=<%=Integer.parseInt(date) + 1%>">翌年</a>
+                    </div>
+                    <div class="clearfix"></div>
                 </div>
                 <div class="panel-body">
                     <div class="row">
@@ -42,17 +47,11 @@
                                 </div>
                             </form>
                         </div>
-                        <div class="col-md-2">
-                            <p>
-                                <a class="btn btn-primary" href="?action=<%=request.getParameter("action")%>&category=<%=request.getParameter("category")%>&date=<%=Integer.parseInt(date) - 1%>">前年</a>
-                                <a class="btn btn-primary" href="?action=<%=request.getParameter("action")%>&category=<%=request.getParameter("category")%>&date=<%=Integer.parseInt(date) + 1%>">翌年</a>
-                            </p>
-                        </div>
                     </div>
+                    <p>
+                        <img class="img-responsive" src="barchart.jpg?action=<%=request.getParameter("action")%>&category=<%=request.getParameter("category")%><%=(request.getParameter("date") != null) ? "&date=" + request.getParameter("date") : ""%>" />
+                    </p>
                 </div>
-                <p>
-                    <img class="img-responsive" src="barchart.jpg?action=<%=request.getParameter("action")%>&category=<%=request.getParameter("category")%><%=(request.getParameter("date") != null) ? "&date=" + request.getParameter("date") : ""%>" />
-                </p>
             </div>
         </div>
         <script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>

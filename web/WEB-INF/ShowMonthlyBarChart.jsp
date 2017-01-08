@@ -31,7 +31,12 @@
         <div class="container theme-showcase" role="main">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <p class="panel-title"><%=dateArray[0]%>年<%=dateArray[1]%>月の<%=request.getParameter("action").equals("show_monthly_rev_bar") ? "収入" : "支出"%></p>
+                    <p class="panel-title pull-left"><%=dateArray[0]%>年<%=dateArray[1]%>月の<%=request.getParameter("action").equals("show_monthly_rev_bar") ? "収入" : "支出"%></p>
+                    <div class="pull-right">
+                        <a class="btn btn-default" href="?action=<%=request.getParameter("action")%>&category=<%=request.getParameter("category")%>&date=<%=previousYear%>-<%=previousMonth%>">前月</a>
+                        <a class="btn btn-default" href="?action=<%=request.getParameter("action")%>&category=<%=request.getParameter("category")%>&date=<%=nextYear%>-<%=nextMonth%>">翌月</a>
+                    </div>
+                    <div class="clearfix"></div>
                 </div>
                 <div class="panel-body">
                     <div class="row">
@@ -48,15 +53,8 @@
                                             }
                                         %>
                                     </select>
-
                                 </div>
                             </form>
-                        </div>
-                        <div class="col-md-2">
-                            <p>
-                                <a class="btn btn-primary" href="?action=<%=request.getParameter("action")%>&category=<%=request.getParameter("category")%>&date=<%=previousYear%>-<%=previousMonth%>">前月</a>
-                                <a class="btn btn-primary" href="?action=<%=request.getParameter("action")%>&category=<%=request.getParameter("category")%>&date=<%=nextYear%>-<%=nextMonth%>">翌月</a>
-                            </p>
                         </div>
                     </div>
                     <p>

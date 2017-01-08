@@ -29,13 +29,14 @@
         <div class="container theme-showcase" role="main">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <p class="panel-title"><%=dateArray[0]%>年<%=dateArray[1]%>月の<%=request.getParameter("action").equals("show_monthly_rev_pie") ? "収入" : "支出"%></p>
+                    <p class="panel-title pull-left"><%=dateArray[0]%>年<%=dateArray[1]%>月の<%=request.getParameter("action").equals("show_monthly_rev_pie") ? "収入" : "支出"%></p>
+                    <div class="pull-right">
+                        <a class="btn btn-default" href="?action=<%=request.getParameter("action")%>&date=<%=previousYear%>-<%=previousMonth%>">前月</a>
+                        <a class="btn btn-default" href="?action=<%=request.getParameter("action")%>&date=<%=nextYear%>-<%=nextMonth%>">翌月</a>
+                    </div>
+                    <div class="clearfix"></div>
                 </div>
                 <div class="panel-body">
-                    <p>
-                        <a class="btn btn-primary" href="?action=<%=request.getParameter("action")%>&date=<%=previousYear%>-<%=previousMonth%>">前月</a>
-                        <a class="btn btn-primary" href="?action=<%=request.getParameter("action")%>&date=<%=nextYear%>-<%=nextMonth%>">翌月</a>
-                    </p>
                     <p>
                         ${requestScope['map']}
                         <img class="img-responsive" src="piechart.jpg?action=<%=request.getParameter("action")%><%=(request.getParameter("date") != null) ? "&date=" + request.getParameter("date") : ""%>" usemap="#map" border="0" />
