@@ -31,7 +31,7 @@
                     <form class="form-vertical" action="?action=update_spe&block_id=<%=request.getParameter("block_id")%>" method="post">
                         <div class="form-group">
                             <div class="row">
-                                <label class="col-md-3 control-label">日付</label>
+                                <label class="col-md-3 control-label"> <span class="label label-danger">必須</span>日付</label>
                             </div>
                             <div class="row">
                                 <div class="col-md-3">
@@ -51,10 +51,10 @@
                         </div>
                         <div class="form-group">
                             <div class="row">
-                                <label class="col-md-2 col-xs-3 control-label">種類</label>
+                                <label class="col-md-2 col-xs-3 control-label">種類 <span class="label label-danger">必須</span></label>
                                 <label class="col-md-2 col-xs-3 control-label">名前</label>
-                                <label class="col-md-2 col-xs-3 control-label">金額</label>
-                                <label class="col-md-2 col-xs-2 control-label">数</label>
+                                <label class="col-md-2 col-xs-3 control-label">金額 <span class="label label-danger">必須</span></label>
+                                <label class="col-md-2 col-xs-2 control-label">数 <span class="label label-danger">必須</span></label>
                             </div>
                             <%                                boolean addFlag = true;
                                 List<SpendingItem> siList = sb.getSpendingItemList();

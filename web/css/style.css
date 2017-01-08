@@ -55,6 +55,14 @@ body {
     display: none;
 }
 
+.update-add-btn {
+    display: none;
+}
+
+.update-close-btn {
+    display: block;
+}
+
 .alert-container {
     position: fixed;
     z-index: 1;
