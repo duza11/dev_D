@@ -71,8 +71,8 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td><%=rSum%></td>
-                                <td><%=sSum%></td>
+                                <td><div class="ft-green"><%=rSum%></div></td>
+                                <td><div class="ft-red"><%=sSum%></div></td>
                             </tr>
                         </tbody>
                     </table>
