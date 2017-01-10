@@ -442,8 +442,7 @@ public class RevenueManager {
 
     public List<RevenueBlock> setDailyDataSet(User user, String date) throws Exception {
         List<RevenueBlock> revenueBlockList = new ArrayList<RevenueBlock>();
-        String sql = "select ri.item_name, rk.kind_name, ri.price, ri.count, "
-                + "ri.kind_id, rb.block_id, rb.place, rb.date from users as u, "
+        String sql = "select * from users as u, "
                 + "revenue_block as rb, revenue_item as ri, revenue_item_kind as rk "
                 + "where u.user_id = rb.user_id and rb.block_id = ri.block_id "
                 + "and ri.kind_id = rk.kind_id and u.user_id = ? and rb.date = ? order by rb.block_id, ri.item_id asc";

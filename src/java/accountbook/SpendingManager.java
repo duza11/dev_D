@@ -438,8 +438,7 @@ public class SpendingManager {
 
     public List<SpendingBlock> setDailyDataSet(User user, String date) throws Exception {
         List<SpendingBlock> spendingBlockList = new ArrayList<SpendingBlock>();
-        String sql = "select si.item_name, sk.kind_name, si.price, si.count, "
-                + "si.kind_id, sb.block_id, sb.place, sb.date from users as u, "
+        String sql = "select * from users as u, "
                 + "spending_block as sb, spending_item as si, spending_item_kind as sk "
                 + "where u.user_id = sb.user_id and sb.block_id = si.block_id "
                 + "and si.kind_id = sk.kind_id and u.user_id = ? and sb.date = ? order by sb.block_id, si.item_id asc";
