@@ -80,7 +80,7 @@
                             </div>
                         </div>
                         <button class="btn btn-primary" type="submit">送信</button>
-                        <button class="btn btn-default" type="reset">リセット</button>
+                        <button class="btn btn-default" type="button">クリア</button>
                     </form>
                 </div>
             </div>

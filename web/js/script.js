@@ -29,6 +29,7 @@ $(function () {
                 if ($(obj).attr('type') == 'text' || $(obj).attr('type') == 'number') {
                     $(obj).val('');
                 }
+                $(obj).find(":selected").prop("selected", false);
             });
 
             // clone取得
@@ -70,4 +71,13 @@ $(function () {
     });
 
     $('.alert').fadeIn(1000).delay(500).fadeOut(2000);
+    
+    $(document).on("click", "#clear", function () {
+        $('input,textarea')
+                .not('input[type=\"radio\"],[type=\"checkbox\"],:hidden, :button, :submit,:reset')
+                .val('');
+        $('input[type=\"radio\"],[type=\"checkbox\"],select')
+                .removeAttr('checked')
+                .find(":selected").prop("selected", false);
+    })
 });
