@@ -458,7 +458,7 @@ public class SpendingManager {
             sb.setBlockId(rs.getInt("block_id"));
             sb.setDate(rs.getString("date"));
             sb.setPlace(rs.getString("place"));
-            List<SpendingItem> sIList = new ArrayList<>();
+            List<SpendingItem> sIList = new ArrayList<SpendingItem>();
             while (counter == rs.getInt("block_id")) {
                 SpendingItem si = new SpendingItem();
                 si.setItemName(rs.getString("item_name"));
@@ -491,7 +491,7 @@ public class SpendingManager {
         rs = ps.executeQuery();
 
         SpendingBlock sb = new SpendingBlock();
-        List<SpendingItem> siList = new ArrayList<>();
+        List<SpendingItem> siList = new ArrayList<SpendingItem>();
 
         while (rs.next()) {
             sb.setBlockId(rs.getInt("sb.block_id"));

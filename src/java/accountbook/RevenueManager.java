@@ -462,7 +462,7 @@ public class RevenueManager {
             rb.setBlockId(rs.getInt("block_id"));
             rb.setDate(rs.getString("date"));
             rb.setPlace(rs.getString("place"));
-            List<RevenueItem> rIList = new ArrayList<>();
+            List<RevenueItem> rIList = new ArrayList<RevenueItem>();
             while (counter == rs.getInt("block_id")) {
                 RevenueItem ri = new RevenueItem();
                 ri.setItemName(rs.getString("item_name"));
@@ -495,7 +495,7 @@ public class RevenueManager {
         rs = ps.executeQuery();
 
         RevenueBlock rb = new RevenueBlock();
-        List<RevenueItem> riList = new ArrayList<>();
+        List<RevenueItem> riList = new ArrayList<RevenueItem>();
 
         while (rs.next()) {
             rb.setBlockId(rs.getInt("rb.block_id"));
