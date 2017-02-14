@@ -21,7 +21,7 @@
         <div class="container theme-showcase" role="main">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <p class="panel-title pull-left"><%=date%>年の<%=request.getParameter("action").equals("show_monthly_rev_bar") ? "収入" : "支出"%></p>
+                    <p class="panel-title pull-left"><%=date%>年の<%=request.getParameter("action").equals("show_yearly_rev_bar") ? "収入" : "支出"%></p>
                     <div class="pull-right">
                         <a class="btn btn-default" href="?action=<%=request.getParameter("action")%>&category=<%=request.getParameter("category")%>&date=<%=Integer.parseInt(date) - 1%>">前年</a>
                         <a class="btn btn-default" href="?action=<%=request.getParameter("action")%>&category=<%=request.getParameter("category")%>&date=<%=Integer.parseInt(date) + 1%>">翌年</a>
